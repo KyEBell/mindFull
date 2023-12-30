@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "start-dev": "nodemon server.js"
+    "start-dev": "nodemon Server.ts",
+    "test-connection": "ts-node config/db.ts"
   },
   "author": "Kyle Bell",
   "license": "MIT",
@@ -19,8 +20,10 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

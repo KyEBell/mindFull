@@ -1,15 +1,37 @@
-import mysql from 'mysql2/promise';
+console.log('Current working directory:', process.cwd());
+
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
 
-const pool = mysql.createPool({
-  host: 'your_database_host',
-  user: 'your_database_user',
-  password: 'your_database_password',
-  database: 'your_database_name',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-export default pool;
+import mysql, { Pool } from 'mysql2/promise';
+
+const createPool = async (): Promise<Pool> => {
+  const pool: Pool = await mysql.createPool({
+    host: process.env.DBH!,
+    user: process.env.DBU!,
+    password: process.env.DBP,
+    database: process.env.DB,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  });
+
+  return pool;
+};
+
+const testConnection = async () => {
+  try {
+    const dbPool = await createPool();
+    const connection = await dbPool.getConnection();
+    console.log('connected to DB');
+    connection.release();
+  } catch (err) {
+    console.log('unable to connect to db', err);
+  }
+};
+
+testConnection();
+
+export default createPool;

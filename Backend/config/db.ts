@@ -1,5 +1,3 @@
-console.log('Current working directory:', process.cwd());
-
 import dotenv from 'dotenv';
 import path from 'path';
 

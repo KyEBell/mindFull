@@ -23,7 +23,7 @@ const testConnection = async () => {
   try {
     const dbPool = await createPool();
     const connection = await dbPool.getConnection();
-    console.log('connected to DB');
+    console.log('connected to DaBa');
     connection.release();
   } catch (err) {
     console.log('unable to connect to db', err);

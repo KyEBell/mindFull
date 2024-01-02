@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt';
+
 import createPool from '../config/db';
 
+//controller to get all users ==================================================================>
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log('getting all users');
     const dbPool = await createPool();
     const [rows] = await dbPool.execute('SELECT * FROM users');
     res.locals.allUsers = rows;
@@ -14,9 +16,9 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+//contoller to get userby ID =======================================================================>
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log('entered into getUserById');
     const userId = req.params.id;
     const dbPool = await createPool();
     const [rows] = await dbPool.execute('SELECT * FROM users WHERE id = ?', [
@@ -38,4 +40,24 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const UserController = { getAllUsers, getUserById };
+//=======================Creating a user controller ==============================================>
+
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username, email, password } = req.body;
+    const dbPool = await createPool();
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await dbPool.execute(
+      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+      [username, email, hashedPassword]
+    );
+    return next();
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+};
+
+export const UserController = { getAllUsers, getUserById, createUser };

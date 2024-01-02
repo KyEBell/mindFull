@@ -22,6 +22,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const user = userRows[0];
+    console.log(userRows);
     if (!('password' in user)) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }

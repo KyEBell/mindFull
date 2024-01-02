@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
+import { User } from '../models/userModel';
 
 import createPool from '../config/db';
 
@@ -44,14 +45,36 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
+
+    if (
+      username.includes(' ') ||
+      email.includes(' ') ||
+      password.includes(' ')
+    ) {
+      return res.status(400).json({
+        error: 'Spaces are not allowed in username, email, or password',
+      });
+    }
+    //.replace for data integrity
+    const sanitizedUsername = username.replace(/\s/g, '');
+    const sanitizedEmail = email.replace(/\s/g, '');
+    const sanitizedPassword = password.replace(/\s/g, '');
+
     const dbPool = await createPool();
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
+
+    const newUser: User = {
+      id: 0,
+      username: sanitizedUsername,
+      email: sanitizedEmail,
+      password: hashedPassword,
+    };
 
     await dbPool.execute(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashedPassword]
+      [newUser.username, newUser.email, newUser.password]
     );
     return next();
   } catch (err) {

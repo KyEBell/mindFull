@@ -1,14 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
+import authRoutes from './routes/authRoutes';
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello From the backend!');

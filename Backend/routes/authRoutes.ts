@@ -8,9 +8,11 @@ router.post(
   '/login',
   UserLoginController.userLogin,
   (req: Request, res: Response) => {
-    return res
-      .status(200)
-      .json({ token: res.locals.token, message: 'Successful login' });
+    return res.status(200).json({
+      accessToken: res.locals.accessToken,
+      refreshToken: res.locals.refreshToken,
+      message: 'Successful login',
+    });
   }
 );
 

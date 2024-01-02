@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { sign, verify } from 'jsonwebtoken';
 import createPool from '../config/db';
+import { TokenFunction } from '../middleware/tokens';
+import { access } from 'fs';
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,7 +24,6 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const user = userRows[0];
-    console.log(userRows);
     if (!('password' in user)) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -31,14 +32,15 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign(
-      { userId: user.id, username: user.username },
-      'your-secret-key',
-      {
-        expiresIn: '1h',
-      }
+
+    const accessToken = TokenFunction.generateAccessToken(
+      user.id,
+      user.username
     );
-    res.locals.token = token;
+    const refreshToken = TokenFunction.generateRefreshToken(user.id);
+
+    res.locals.accessToken = accessToken;
+    res.locals.refreshToken = refreshToken;
     return next();
   } catch (error) {
     console.error(error);

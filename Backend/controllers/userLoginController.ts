@@ -1,24 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import jwt, { sign, verify } from 'jsonwebtoken';
 import createPool from '../config/db';
 import { TokenFunction } from '../middleware/tokens';
-import { access } from 'fs';
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
+    const { username, email, password } = req.body;
+    if ((!username && !email) || !password) {
       return res
         .status(400)
-        .json({ error: 'Both username and password must be entered' });
+        .json({ error: 'Username or email and password must be entered' });
     }
     const dbPool = await createPool();
 
-    const [userRows] = await dbPool.execute(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
+    let userRows;
+    if (username) {
+      [userRows] = await dbPool.execute(
+        'SELECT * FROM users WHERE username = ?',
+        [username]
+      );
+    } else if (email) {
+      [userRows] = await dbPool.execute('SELECT * FROM users WHERE email = ?', [
+        email,
+      ]);
+    }
     if (!Array.isArray(userRows) || userRows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }

@@ -20,7 +20,7 @@ app.get('/', (req: Request, res: Response) => {
 //<---------------------------ERROR HANDLING------------------------->
 //Catch-all route error handler, sends status of 404 and "page not found"
 app.use((req, res) => res.status(404).send('Page Not Found'));
-//GLOBAL ERROR HANDLER IS HERE
+//GLOBAL ERROR HANDLER
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { User } from '../models/userModel';
 
-import createPool from '../config/db';
+import pool from '../config/db';
 
 //=======================Creating a user controller ==============================================>
 
@@ -24,8 +24,6 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const sanitizedEmail = email.replace(/\s/g, '');
     const sanitizedPassword = password.replace(/\s/g, '');
 
-    const dbPool = await createPool();
-
     const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
 
     const newUser: User = {
@@ -35,7 +33,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       password: hashedPassword,
     };
 
-    await dbPool.execute(
+    await pool.execute(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [newUser.username, newUser.email, newUser.password]
     );
@@ -49,8 +47,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 //controller to get all users ==================================================================>
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbPool = await createPool();
-    const [rows] = await dbPool.execute('SELECT * FROM users');
+    const [rows] = await pool.execute('SELECT * FROM users');
     res.locals.allUsers = rows;
     next();
   } catch (error) {
@@ -63,8 +60,7 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.id;
-    const dbPool = await createPool();
-    const [rows] = await dbPool.execute('SELECT * FROM users WHERE id = ?', [
+    const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [
       userId,
     ]);
     if (!Array.isArray(rows)) {

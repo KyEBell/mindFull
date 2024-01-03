@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { UserController } from '../controllers/createUserController';
+import { UserController } from '../controllers/userController';
 import { validateUserInput } from '../middleware/validateUserFunction';
 
 const router = express.Router();
@@ -10,7 +10,6 @@ router.get('/', UserController.getAllUsers, (req: Request, res: Response) => {
   return res.status(200).json(res.locals.allUsers);
 });
 
-//Route here can probably be deleted later on.
 router.get(
   '/:id',
   UserController.getUserById,
@@ -25,6 +24,18 @@ router.post(
   UserController.createUser,
   (req: Request, res: Response) => {
     return res.status(201).json({ message: 'user successfully created' });
+  }
+);
+
+router.put('/:id', UserController.editUser, (req: Request, res: Response) => {
+  return res.status(200).json({ message: 'User edit successful' });
+});
+
+router.delete(
+  '/:id',
+  UserController.deleteUser,
+  (req: Request, res: Response) => {
+    return res.status(204).json({ message: 'user successfully deleted' });
   }
 );
 

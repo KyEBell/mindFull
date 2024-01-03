@@ -29,8 +29,6 @@ export const validateUserInput = async (
     if (!emailRegex.test(mail)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-    //create DBpool
-    // const dbPool = await createPool();
 
     // Checking if userEmail already exists
     const [existingEmailRows] = await pool.execute<RowDataPacket[]>(

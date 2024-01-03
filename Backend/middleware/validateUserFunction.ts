@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import createPool from '../config/db';
+import pool from '../config/db';
 import { RowDataPacket } from 'mysql2';
 
 export const validateUserInput = async (
@@ -12,27 +12,30 @@ export const validateUserInput = async (
 
     // Validation checks
     //if username, email or password are left blank
-    if (!username || !email || !password) {
+    const uname = username.trim();
+    const pass = password.trim();
+    const mail = email.trim();
+    if (!uname || !mail || !pass) {
       return res.status(400).json({ error: 'All fields are required' });
     }
     //password min length must be 8
-    if (password.length < 8) {
+    if (pass.length < 8) {
       return res
         .status(400)
         .json({ error: 'Password must be at least 8 characters long' });
     }
     //check email formatting
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(mail)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
     //create DBpool
-    const dbPool = await createPool();
+    // const dbPool = await createPool();
 
     // Checking if userEmail already exists
-    const [existingEmailRows] = await dbPool.execute<RowDataPacket[]>(
+    const [existingEmailRows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM users WHERE email = ?',
-      [email]
+      [mail]
     );
 
     if (existingEmailRows.length > 0) {
@@ -42,9 +45,9 @@ export const validateUserInput = async (
     }
 
     // Check if the username already exists
-    const [existingUsernameRows] = await dbPool.execute<RowDataPacket[]>(
+    const [existingUsernameRows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM users WHERE username = ?',
-      [username]
+      [uname]
     );
 
     if (existingUsernameRows.length > 0) {

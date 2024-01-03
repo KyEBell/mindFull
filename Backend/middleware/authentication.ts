@@ -1,9 +1,9 @@
 import { verify, JsonWebTokenError } from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import path from 'path';
+// import dotenv from 'dotenv';
+// import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 interface ExpressRequest extends Request {
   user?: import('../models/userModel').User;

@@ -1,8 +1,8 @@
 import { sign } from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import path from 'path';
+// import dotenv from 'dotenv';
+// import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const generateAccessToken = (userId: number, username: string): string => {
   const key = process.env.KEY;

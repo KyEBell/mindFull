@@ -2,6 +2,10 @@ import express, { Request, Response, NextFunction } from 'express';
 import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
 import authRoutes from './routes/authRoutes';
+import dotenv from 'dotenv';
+import path, { dirname } from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, './../.env') });
 
 const app = express();
 const PORT = 3000;

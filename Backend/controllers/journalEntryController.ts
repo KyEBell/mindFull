@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import pool from '../config/db';
-import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { RowDataPacket } from 'mysql2';
+import { encryptionUtils } from '../utils/encryption';
+import crypto from 'crypto';
 
 interface ExtendedRequest extends Request {
   user?: import('../models/userModel').User;
@@ -67,6 +69,14 @@ const addJournalEntry = async (
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
+
+    const eKey = encryptionUtils.getEncryptionKey();
+
+    const iv = crypto.randomBytes(16);
+
+    const encryptGT = encryptionUtils.encryptData(good_thing, eKey, iv);
+    const encryptCT = encryptionUtils.encryptData(challenging_thing, eKey, iv);
+    const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, iv);
 
     const [newJournalEntryArray] = await pool.execute(
       'INSERT INTO journal_entries(user_id, good_thing,challenging_thing,learned_thing, user_selected_date) VALUES (?,?,?,?,?)',

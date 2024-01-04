@@ -19,8 +19,9 @@ const authenticateToken = (
   res: Response,
   next: NextFunction
 ): void => {
-  const accessToken = req.headers.authorization?.split(' ')[1];
-  console.log('atoken from authenticate token', accessToken);
+  // const accessToken = req.headers.authorization?.split(' ')[1];
+  const accessToken = res.locals.accessToken;
+  console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
     return;
@@ -42,9 +43,11 @@ const authenticateToken = (
         (decodedToken as any).id,
         (decodedToken as any).username
       );
-      res.cookie('accessToken', newAccessToken, { httpOnly: true });
+      // res.cookie('accessToken', newAccessToken, { httpOnly: true });
+      res.locals.accessToken = newAccessToken;
     }
     req.user = decodedToken as import('../models/userModel').User;
+    res.header('Authorization', `Bearer ${res.locals.accessToken}`);
 
     return next();
   } catch (error) {

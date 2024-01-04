@@ -52,9 +52,15 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = Token.generateAccessToken(user.id, user.username);
     const refreshToken = Token.generateRefreshToken(user.id);
 
-    res.cookie('accessToken', accessToken, { httpOnly: true });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    console.log('Access token from userlogincontroller', accessToken);
+    // res.cookie('accessToken', accessToken, { httpOnly: true });
+    // res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    // console.log('Access token from userlogincontroller', accessToken);
+    res.locals.accessToken = accessToken;
+    res.locals.refreshToken = refreshToken;
+    console.log(
+      'res.locals.accessToken from userLoginController',
+      res.locals.accessToken
+    );
     return next();
   } catch (error) {
     console.error(error);

@@ -4,12 +4,10 @@ import {
   TokenExpiredError,
   decode,
 } from 'jsonwebtoken';
-// import dotenv from 'dotenv';
-// import path from 'path';
+
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
 
-// dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 interface ExpressRequest extends Request {
   user?: import('../models/userModel').User;
 }
@@ -20,7 +18,6 @@ const authenticateToken = (
   next: NextFunction
 ): void => {
   const accessToken = req.headers.authorization?.split(' ')[1];
-  // const accessToken = res.locals.accessToken;
   console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
@@ -45,7 +42,9 @@ const authenticateToken = (
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
       // res.locals.accessToken = newAccessToken;
-      console.log('new access token being created');
+      console.log(
+        'new access token being created from token expiration check function in authentication.ts'
+      );
     }
     req.user = decodedToken as import('../models/userModel').User;
 

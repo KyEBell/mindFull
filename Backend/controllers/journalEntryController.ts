@@ -19,7 +19,6 @@ const getAllJournalEntries = async (
 ) => {
   try {
     const userId = req.user?.id;
-    console.log(userId, 'USERID');
     const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE user_id = ?',
       [userId]
@@ -119,7 +118,6 @@ const addJournalEntry = async (
 ) => {
   try {
     const userId = req.user?.id;
-    console.log('userId', userId);
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
@@ -156,7 +154,6 @@ const addJournalEntry = async (
         ivLT.toString('hex'),
       ]
     );
-    console.log('New Journal Entry Array:', newJournalEntryArray);
 
     const newJournalEntryId = (newJournalEntryArray as ResultSetHeader)
       .insertId;
@@ -264,7 +261,6 @@ const deleteJournalEntry = async (
   try {
     const userId = req.user?.id;
     const journalEntryId = req.params.id;
-    console.log('UserID from delete', userId, 'journalEntryId', journalEntryId);
 
     const [entryToDelete] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id = ? AND user_id = ?',

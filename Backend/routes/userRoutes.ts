@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { UserController } from '../controllers/userController';
-import { validateUserInput } from '../middleware/validateUserFunction';
 import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();
@@ -17,15 +16,6 @@ router.get(
   UserController.getUserById,
   (req: Request, res: Response) => {
     return res.status(200).json(res.locals.user);
-  }
-);
-
-router.post(
-  '/',
-  validateUserInput,
-  UserController.createUser,
-  (req: Request, res: Response) => {
-    return res.status(201).json({ message: 'user successfully created' });
   }
 );
 

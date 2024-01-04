@@ -46,6 +46,7 @@ router.put(
 //DELETE journal entry
 router.delete(
   '/:id',
+  authenticateToken,
   JournalEntryController.deleteJournalEntry,
   (req: Request, res: Response) => {
     return res.status(200).json({ message: 'Journal successfully deleted' });

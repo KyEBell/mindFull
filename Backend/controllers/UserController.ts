@@ -4,6 +4,7 @@ import { User } from '../models/userModel';
 import pool from '../config/db';
 import { RowDataPacket } from 'mysql2';
 import { isValidEmailFormat } from '../utils/isValidEmail';
+import { Token } from '../middleware/tokens';
 //=======================Creating a user controller ==============================================>
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +38,12 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [newUser.username, newUser.email, newUser.password]
     );
+    const { id: newUserId, username: newUsername } = newUser;
+    const accessToken = Token.generateAccessToken(newUserId, newUsername);
+    const refreshToken = Token.generateRefreshToken(newUserId);
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    console.log('access token from createUser', accessToken);
     return next();
   } catch (err) {
     console.log(err);

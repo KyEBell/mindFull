@@ -19,8 +19,8 @@ const authenticateToken = (
   res: Response,
   next: NextFunction
 ): void => {
-  // const accessToken = req.headers.authorization?.split(' ')[1];
-  const accessToken = res.locals.accessToken;
+  const accessToken = req.headers.authorization?.split(' ')[1];
+  // const accessToken = res.locals.accessToken;
   console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
@@ -37,17 +37,17 @@ const authenticateToken = (
     const expirationTime = (decodedToken as any).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;
-
+    console.log('EXPIRATION TIME', timeToExpiration);
     if (timeToExpiration < 300 * 1000) {
       const newAccessToken = Token.generateAccessToken(
         (decodedToken as any).id,
         (decodedToken as any).username
       );
-      // res.cookie('accessToken', newAccessToken, { httpOnly: true });
-      res.locals.accessToken = newAccessToken;
+      res.cookie('accessToken', newAccessToken, { httpOnly: true });
+      // res.locals.accessToken = newAccessToken;
+      console.log('new access token being created');
     }
     req.user = decodedToken as import('../models/userModel').User;
-    res.header('Authorization', `Bearer ${res.locals.accessToken}`);
 
     return next();
   } catch (error) {

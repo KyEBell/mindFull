@@ -119,6 +119,7 @@ const addJournalEntry = async (
 ) => {
   try {
     const userId = req.user?.id;
+    console.log('userId', userId);
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
@@ -263,6 +264,7 @@ const deleteJournalEntry = async (
   try {
     const userId = req.user?.id;
     const journalEntryId = req.params.id;
+    console.log('UserID from delete', userId, 'journalEntryId', journalEntryId);
 
     const [entryToDelete] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id = ? AND user_id = ?',

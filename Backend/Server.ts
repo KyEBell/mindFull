@@ -1,10 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
+import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
 import authRoutes from './routes/authRoutes';
+import signUpRoute from './routes/signUpRoute';
 import dotenv from 'dotenv';
 import path from 'path';
-import { authenticateToken } from './middleware/authentication';
+// import { authenticateToken } from './middleware/authentication';
 
 dotenv.config({ path: path.resolve(__dirname, './../.env') });
 
@@ -13,7 +15,8 @@ const PORT = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
+app.use('/api/signup', signUpRoute);
 app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
 app.use('/api/auth', authRoutes);

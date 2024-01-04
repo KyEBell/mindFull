@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
 import { UserController } from '../controllers/userController';
 import { validateUserInput } from '../middleware/validateUserFunction';
+import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();
+router.use(authenticateToken);
 
 //defining user routes
 //ROUTE HERE AS A TEST PLACEHOLDER, WILL NOT NEED TO GET ALL USERS IN FINAL APP

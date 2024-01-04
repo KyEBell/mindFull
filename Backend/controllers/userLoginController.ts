@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { TokenFunction } from '../middleware/tokens';
+import { Token } from '../middleware/tokens';
 import { User } from '../models/userModel';
 import pool from '../config/db';
 
@@ -49,14 +49,12 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const accessToken = TokenFunction.generateAccessToken(
-      user.id,
-      user.username
-    );
-    const refreshToken = TokenFunction.generateRefreshToken(user.id);
+    const accessToken = Token.generateAccessToken(user.id, user.username);
+    const refreshToken = Token.generateRefreshToken(user.id);
 
-    res.locals.accessToken = accessToken;
-    res.locals.refreshToken = refreshToken;
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    console.log('Access token from userlogincontroller', accessToken);
     return next();
   } catch (error) {
     console.error(error);

@@ -3,11 +3,11 @@ import { JournalEntryController } from '../controllers/journalEntryController';
 import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();
-router.use(authenticateToken);
 
 // Define journal entry routes
 router.get(
   '/',
+  authenticateToken,
   JournalEntryController.getAllJournalEntries,
   (req: Request, res: Response) => {
     return res.status(200).json(res.locals.allEntries);
@@ -16,6 +16,7 @@ router.get(
 //getJournalEntry by ID
 router.get(
   '/:id',
+  authenticateToken,
   JournalEntryController.getJournalEntryById,
   (req: Request, res: Response) => {
     return res.status(200).json(res.locals.journalEntry);
@@ -26,6 +27,7 @@ router.get(
 
 router.post(
   '/',
+  authenticateToken,
   JournalEntryController.addJournalEntry,
   (req: Request, res: Response) => {
     return res.status(201).json(res.locals.newJournalEntry);
@@ -35,6 +37,7 @@ router.post(
 
 router.put(
   '/:id',
+  authenticateToken,
   JournalEntryController.editJournalEntry,
   (req: Request, res: Response) => {
     return res.status(200).json(res.locals.updatedEntry);
@@ -45,7 +48,7 @@ router.delete(
   '/:id',
   JournalEntryController.deleteJournalEntry,
   (req: Request, res: Response) => {
-    return res.status(204).json({ message: 'Journal successfully deleted' });
+    return res.status(200).json({ message: 'Journal successfully deleted' });
   }
 );
 

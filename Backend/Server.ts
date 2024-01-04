@@ -3,7 +3,8 @@ import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
 import authRoutes from './routes/authRoutes';
 import dotenv from 'dotenv';
-import path, { dirname } from 'path';
+import path from 'path';
+import { authenticateToken } from './middleware/authentication';
 
 dotenv.config({ path: path.resolve(__dirname, './../.env') });
 

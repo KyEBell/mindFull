@@ -4,7 +4,6 @@ import mysql, { Pool } from 'mysql2/promise';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-// const createPool = async (): Promise<Pool> => {
 const pool: Pool = mysql.createPool({
   host: process.env.DBH!,
   user: process.env.DBU!,
@@ -17,7 +16,6 @@ const pool: Pool = mysql.createPool({
 
 const testConnection = async () => {
   try {
-    // const dbPool = await createPool();
     const connection = await pool.getConnection();
     console.log('connected to DaBa');
     connection.release();

@@ -5,6 +5,7 @@ import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();
 
+//route for user to create account
 router.post(
   '/',
   validateUserInput,

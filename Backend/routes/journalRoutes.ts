@@ -4,7 +4,7 @@ import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();
 
-// Define journal entry routes
+// Route to get all journal entries
 router.get(
   '/',
   authenticateToken,

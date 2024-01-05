@@ -1,8 +1,5 @@
 import { sign } from 'jsonwebtoken';
-// import dotenv from 'dotenv';
-// import path from 'path';
 
-// dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const expiration = '1h';
 const refresh_expiration = '7d';
 const generateAccessToken = (id: number, username: string): string => {

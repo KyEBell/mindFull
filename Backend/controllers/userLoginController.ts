@@ -55,8 +55,6 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     res.cookie('accessToken', accessToken, { httpOnly: true });
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
     console.log('Access token from userlogincontroller', accessToken);
-    // res.locals.accessToken = accessToken;
-    // res.locals.refreshToken = refreshToken;
     return next();
   } catch (error) {
     console.error(error);

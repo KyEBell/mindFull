@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
-import authRoutes from './routes/authRoutes';
+import loginRoute from './routes/loginRoute';
 import signUpRoute from './routes/signUpRoute';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use('/api/signup', signUpRoute);
 app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/login', loginRoute);
 //Get call from backend------------------------------------------------->
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello From the backend!');
@@ -42,8 +42,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   return res.status(errorObj.status).json(errorObj.message);
 });
 
-//PORT------------------------------------------------>
-
+//<---------------------------APP.LISTEN------------------------->
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

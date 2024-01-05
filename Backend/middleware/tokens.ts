@@ -13,7 +13,7 @@ const generateAccessToken = (id: number, username: string): string => {
   }
 
   return sign({ id, username }, key, {
-    expiresIn: '1h',
+    expiresIn: expiration,
   });
 };
 
@@ -25,7 +25,7 @@ const generateRefreshToken = (id: number): string => {
   }
 
   return sign({ id }, refreshTokenKey, {
-    expiresIn: '7d',
+    expiresIn: refresh_expiration,
   });
 };
 

@@ -7,9 +7,10 @@ import {
 
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
+import { User } from '../models/userModel';
 
 interface ExpressRequest extends Request {
-  user?: import('../models/userModel').User;
+  user?: User;
 }
 
 const authenticateToken = (
@@ -46,7 +47,7 @@ const authenticateToken = (
         'new access token being created from token expiration check function in authentication.ts'
       );
     }
-    req.user = decodedToken as import('../models/userModel').User;
+    req.user = decodedToken as User;
 
     return next();
   } catch (error) {

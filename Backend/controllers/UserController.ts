@@ -5,6 +5,7 @@ import pool from '../config/db';
 import { RowDataPacket } from 'mysql2';
 import { isValidEmailFormat } from '../utils/isValidEmail';
 import { Token } from '../middleware/tokens';
+import { ExtendedRequest } from '../types';
 //=======================Creating a user controller ==============================================>
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -53,21 +54,42 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 //EDIT USER CONTROLLER =====================================================================>
 
-const editUser = async (req: Request, res: Response, next: NextFunction) => {
+const editUser = async (
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const userId = req.params.id;
     const { email, password, username } = req.body;
 
+    const authenticatedUserId = (req.user as User).id;
+
+    if (userId !== authenticatedUserId.toString()) {
+      return res
+        .status(403)
+        .json({ error: 'Forbidden - You can only edit your own information' });
+    }
     const isInvalid =
       (username && username.includes(' ')) ||
       (email && email.includes(' ')) ||
       (password && password.includes(' ')) ||
-      (password && password.length < 8) ||
-      (email && !isValidEmailFormat(email));
+      (password && password.length < 8);
+
+    const emailIsNotValid = email && !isValidEmailFormat(email);
+
     if (isInvalid) {
       {
         return res.status(400).json({
           error: 'Spaces are not allowed in username, email, or password',
+        });
+      }
+    }
+
+    if (emailIsNotValid) {
+      {
+        return res.status(400).json({
+          error: 'email format is incorrect',
         });
       }
     }

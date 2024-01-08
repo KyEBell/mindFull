@@ -3,12 +3,10 @@ import pool from '../config/db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import { encryptionUtils } from '../utils/encryption';
 import { JournalEntry } from '../models/journalModel';
+import { ExtendedRequest } from '../types';
 
 import crypto from 'crypto';
 
-interface ExtendedRequest extends Request {
-  user?: import('../models/userModel').User;
-}
 const eKey = encryptionUtils.getEncryptionKey();
 
 //GET ALL JOURNAL ENTRIES===================================================================>

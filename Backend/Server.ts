@@ -6,6 +6,7 @@ import loginRoute from './routes/loginRoute';
 import signUpRoute from './routes/signUpRoute';
 import dotenv from 'dotenv';
 import path from 'path';
+import cors from 'cors';
 
 dotenv.config({ path: path.resolve(__dirname, './../.env') });
 
@@ -13,6 +14,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 //initial app.use calls------------------------------------------------->
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

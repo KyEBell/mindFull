@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { UserController } from '../controllers/UserController';
 import { validateUserInput } from '../middleware/validateUserFunction';
 import { authenticateToken } from '../middleware/authentication';

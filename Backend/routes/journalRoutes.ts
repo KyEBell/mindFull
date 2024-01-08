@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { JournalEntryController } from '../controllers/journalEntryController';
+import { JournalEntryController } from '../controllers/JournalEntryController';
 import { authenticateToken } from '../middleware/authentication';
 
 const router = express.Router();

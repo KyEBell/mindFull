@@ -68,7 +68,7 @@ const editUser = async (
     if (userId !== authenticatedUserId.toString()) {
       return res
         .status(403)
-        .json({ error: 'Forbidden - You can only edit your own information' });
+        .json({ error: 'Forbidden - user to edit must be logged in' });
     }
     const isInvalid =
       (username && username.includes(' ')) ||

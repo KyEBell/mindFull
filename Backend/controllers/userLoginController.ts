@@ -15,6 +15,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const { username, email, password } = req.body;
+    console.log('req.body from userLogin', username, email, password);
     if ((!username && !email) || !password) {
       return res
         .status(400)
@@ -48,7 +49,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
+    console.log('USER ID FROM loginController', user.id);
     const accessToken = Token.generateAccessToken(user.id, user.username);
     const refreshToken = Token.generateRefreshToken(user.id);
 

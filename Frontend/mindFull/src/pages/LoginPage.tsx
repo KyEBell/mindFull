@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import userLoginService from '../services/userLoginService';
 import styles from '../styles/LoginPage.module.css';
 
 interface LoginForm {
@@ -19,12 +20,12 @@ const LoginPage: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+    console.log('formData', formData);
   };
 
   const handleLogin = () => {
-    // Perform login logic here
     console.log('Logging in with:', formData);
-    // Redirect to home or dashboard after successful login
+    userLoginService(formData.usernameOrEmail, '', formData.password);
   };
 
   return (

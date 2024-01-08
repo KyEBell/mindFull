@@ -14,6 +14,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     );
   }
   try {
+    console.log('IN THE LOGIN CONTROLLER');
     const { username, email, password } = req.body;
     console.log('req.body from userLogin', username, email, password);
     if ((!username && !email) || !password) {

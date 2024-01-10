@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import userLoginService from '../services/userLoginService';
 import styles from '../styles/LoginPage.module.css';
 
@@ -8,7 +8,12 @@ interface LoginForm {
   password: string;
 }
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginForm>({
     usernameOrEmail: '',
     password: '',
@@ -23,9 +28,25 @@ const LoginPage: React.FC = () => {
     console.log('formData', formData);
   };
 
-  const handleLogin = () => {
-    console.log('Logging in with:', formData);
-    userLoginService(formData.usernameOrEmail, '', formData.password);
+  const handleLogin = async () => {
+    try {
+      console.log('Logging in with:', formData);
+      const { accessToken, refreshToken } = await userLoginService(
+        formData.usernameOrEmail,
+        '',
+        formData.password
+      );
+      console.log('AccessToken:', accessToken);
+      console.log('RefreshToken:', refreshToken);
+
+      setIsAuthenticated(true);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      console.log('user is authenticated!');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (

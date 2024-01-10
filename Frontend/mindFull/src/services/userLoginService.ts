@@ -22,11 +22,16 @@ async function userLoginService(
         email,
         password,
       }),
+      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Login Failed');
     }
+
+    console.log('response from login service', response);
     const data: LoginResponse = await response.json();
+    console.log('Parsed data:', data);
+
     return data;
   } catch (error) {
     console.error('Login Error', error);

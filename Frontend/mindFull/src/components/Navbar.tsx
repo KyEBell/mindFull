@@ -1,15 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 
 interface NavBarProps {
   isAuthenticated: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ isAuthenticated }) => {
+const NavBar: React.FC<NavBarProps> = ({
+  isAuthenticated,
+  setIsAuthenticated,
+}) => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate('/');
+  };
   return (
     <nav className={styles.navbar}>
-      <Link to='/' className={styles.navbarBrand}>
+      <Link to='/Dashboard' className={styles.navbarBrand}>
         mindFull
       </Link>
       <ul className={styles.navbarNav}>
@@ -29,9 +38,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated }) => {
         )}
         {isAuthenticated && (
           <li className={styles.navItem}>
-            <button onClick={() => console.log('Logout clicked')}>
-              Logout
-            </button>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         )}
         <li className={styles.navItem}>

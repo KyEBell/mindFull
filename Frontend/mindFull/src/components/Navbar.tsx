@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
+import LogoutModal from './LogoutModal';
+import Notification from './Notification';
 
 interface NavBarProps {
   isAuthenticated: boolean;
@@ -12,13 +14,37 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-  const handleLogout = () => {
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  const openLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const closeLogoutModal = () => {
+    setIsLogoutModalOpen(false);
+  };
+
+  const handleNotification = (message: string, duration: number) => {
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, duration);
+  };
+
+  const confirmLogout = () => {
     setIsAuthenticated(false);
+    closeLogoutModal();
+    handleNotification('You have been successfully logged out', 3000);
     navigate('/');
   };
+
   return (
     <nav className={styles.navbar}>
-      <Link to='/Dashboard' className={styles.navbarBrand}>
+      <Link
+        to={isAuthenticated ? '/Dashboard' : '/'}
+        className={styles.navbarBrand}>
         mindFull
       </Link>
       <ul className={styles.navbarNav}>
@@ -36,11 +62,7 @@ const NavBar: React.FC<NavBarProps> = ({
             </li>
           </>
         )}
-        {isAuthenticated && (
-          <li className={styles.navItem}>
-            <button onClick={handleLogout}>Logout</button>
-          </li>
-        )}
+
         <li className={styles.navItem}>
           <Link to='/about' className={styles.navLink}>
             About
@@ -56,7 +78,24 @@ const NavBar: React.FC<NavBarProps> = ({
             Resources
           </Link>
         </li>
+        {showNotification && (
+          <Notification
+            message='You have been successfully logged out.'
+            onClose={() => setShowNotification(false)}
+          />
+        )}
+        {isAuthenticated && (
+          <li className={styles.navItem}>
+            <button onClick={openLogoutModal}>Logout</button>
+          </li>
+        )}
       </ul>
+      {isLogoutModalOpen && (
+        <LogoutModal
+          closeModal={closeLogoutModal}
+          confirmLogout={confirmLogout}
+        />
+      )}
     </nav>
   );
 };

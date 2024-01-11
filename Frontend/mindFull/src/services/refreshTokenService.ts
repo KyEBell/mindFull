@@ -1,3 +1,5 @@
+const url = 'http://localhost:3000/api/token/refresh';
+
 interface TokenRefreshResponse {
   accessToken: string;
 }
@@ -6,7 +8,7 @@ const refreshTokenService = async (
   refreshToken: string
 ): Promise<TokenRefreshResponse> => {
   try {
-    const response = await fetch('YOUR_REFRESH_ENDPOINT', {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 import LogoutModal from './LogoutModal';
@@ -15,31 +15,14 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-
-  const openLogoutModal = () => {
-    setIsLogoutModalOpen(true);
-  };
-
-  const closeLogoutModal = () => {
-    setIsLogoutModalOpen(false);
-  };
-
-  const handleNotification = (message: string, duration: number) => {
-    setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, duration);
-  };
-
-  const confirmLogout = () => {
-    setIsAuthenticated(false);
-    closeLogoutModal();
-    handleNotification('You have been successfully logged out', 3000);
-    navigate('/');
-  };
+  const {
+    isLogoutModalOpen,
+    openLogoutModal,
+    closeLogoutModal,
+    showNotification,
+    confirmLogout,
+    handleNotification,
+  } = useLogout();
 
   return (
     <nav className={styles.navbar}>
@@ -82,7 +65,7 @@ const NavBar: React.FC<NavBarProps> = ({
         {showNotification && (
           <Notification
             message='You have been successfully logged out.'
-            onClose={() => setShowNotification(false)}
+            onClose={() => handleNotification('', 10000)}
           />
         )}
         {isAuthenticated && (
@@ -94,7 +77,7 @@ const NavBar: React.FC<NavBarProps> = ({
       {isLogoutModalOpen && (
         <LogoutModal
           closeModal={closeLogoutModal}
-          confirmLogout={confirmLogout}
+          confirmLogout={() => confirmLogout(navigate, setIsAuthenticated)}
         />
       )}
     </nav>

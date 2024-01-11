@@ -30,7 +30,7 @@ async function userLoginService(
 
     console.log('response from login service', response);
     const data: LoginResponse = await response.json();
-    console.log('Parsed data:', data);
+    // console.log('Parsed data:', data);
 
     return data;
   } catch (error) {

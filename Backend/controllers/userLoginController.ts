@@ -51,6 +51,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     console.log('USER ID FROM loginController', user.id);
+    console.log('username from login controller', user.username);
     const accessToken = Token.generateAccessToken(user.id, user.username);
     const refreshToken = Token.generateRefreshToken(user.id);
 

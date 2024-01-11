@@ -42,6 +42,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
       setIsAuthenticated(true);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
+      console.log('AccessToken:', accessToken);
+      console.log('RefreshToken:', refreshToken);
       console.log('user is authenticated!');
       navigate('/dashboard');
     } catch (error) {

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const logoutURL = 'http://localhost:3000/api/logout/';
+
 interface LogoutHook {
   isLogoutModalOpen: boolean;
   openLogoutModal: () => void;
@@ -9,7 +11,7 @@ interface LogoutHook {
     navigate: (path: string) => void,
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
-  handleNotification: (message: string, duration?: number) => void;
+  handleNotification: (message: string, duration: number) => void;
 }
 
 interface HttpError {
@@ -36,12 +38,12 @@ const useLogout = (): LogoutHook => {
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     try {
-      const response = await fetch('/api/logout', {
+      const response = await fetch(logoutURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important to include credentials for cookies
+        credentials: 'include',
       });
 
       if (!response.ok) {

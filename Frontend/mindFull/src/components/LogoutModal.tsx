@@ -14,7 +14,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <p>Are you sure you want to logout?</p>
-        <button onClick={confirmLogout}>LOGOUT</button>
+        <button onClick={() => confirmLogout()}>LOGOUT</button>
         <button onClick={closeModal}>CANCEL</button>
       </div>
     </div>

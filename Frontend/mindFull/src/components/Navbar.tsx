@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 import LogoutModal from './LogoutModal';
+import useLogout from '../hooks/useLogout';
 import Notification from './Notification';
 
 interface NavBarProps {

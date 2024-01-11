@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
 import loginRoute from './routes/loginRoute';
 import signUpRoute from './routes/signUpRoute';
+import tokenRoute from './routes/tokenRoute';
 import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors';
@@ -30,6 +31,8 @@ app.use('/api/signup', signUpRoute);
 app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
 app.use('/api/login', loginRoute);
+app.use('/api/token', tokenRoute);
+
 //Get call from backend------------------------------------------------->
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello From the backend!');

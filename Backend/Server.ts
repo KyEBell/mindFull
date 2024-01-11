@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes';
 import journalRoutes from './routes/journalRoutes';
 import loginRoute from './routes/loginRoute';
+import logoutRoute from './routes/logoutRoute';
 import signUpRoute from './routes/signUpRoute';
 import tokenRoute from './routes/tokenRoute';
 import dotenv from 'dotenv';
@@ -32,6 +33,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
 app.use('/api/login', loginRoute);
 app.use('/api/token', tokenRoute);
+app.use('/api/logout', logoutRoute);
 
 //Get call from backend------------------------------------------------->
 app.get('/', (req: Request, res: Response) => {

@@ -44,6 +44,9 @@ const NavBar: React.FC<NavBarProps> = ({
         throw new Error('Logout failed');
       }
 
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+
       setIsAuthenticated(false);
       closeLogoutModal();
       handleNotification(3000);

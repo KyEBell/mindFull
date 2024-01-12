@@ -25,12 +25,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
       ...prevData,
       [name]: value,
     }));
-    console.log('formData', formData);
+    // console.log('formData', formData);
   };
 
   const handleLogin = async () => {
     try {
-      console.log('Logging in with:', formData);
+      // console.log('Logging in with:', formData);
       const { accessToken, refreshToken } = await userLoginService(
         formData.usernameOrEmail,
         '',

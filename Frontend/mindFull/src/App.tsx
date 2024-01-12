@@ -13,7 +13,6 @@ import { refreshTokenService } from './services/refreshTokenService';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    // Initialize state from localStorage or default to false
     return localStorage.getItem('isAuthenticated') === 'true';
   });
   console.log('isAuthenticated', isAuthenticated);
@@ -26,9 +25,10 @@ const App: React.FC = () => {
         const refreshToken = localStorage.getItem('refreshToken');
         console.log('accessToken from useEffect in app.tsx', accessToken);
         console.log('refreshToken from useEffect in app.tsx', refreshToken);
+        console.log('localStorage', localStorage);
 
         if (accessToken) {
-          // console.log('entering if(accessToken)');
+          console.log('entering if(accessToken)', accessToken);
           setIsAuthenticated(true);
         } else if (refreshToken) {
           const { accessToken: newAccessToken } = await refreshTokenService(

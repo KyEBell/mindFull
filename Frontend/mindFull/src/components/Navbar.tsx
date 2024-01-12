@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 import LogoutModal from './LogoutModal';
-// import useLogout from '../hooks/useLogout';
 import Notification from './Notification';
 import useNotification from '../hooks/useNotification';
 import NavbarLinks from './NavBarLinks';
 import LogoutButton from '../UI/logoutButton';
-const logoutURL = 'http://localhost:3000/api/logout/';
 
 interface NavBarProps {
   isAuthenticated: boolean;
@@ -24,6 +22,8 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
+  const logoutURL = 'http://localhost:3000/api/logout/';
+
   const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 

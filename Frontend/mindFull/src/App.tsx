@@ -12,9 +12,7 @@ import ResourcePage from './pages/ResourcePage';
 import { refreshTokenService } from './services/refreshTokenService';
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('isAuthenticated') === 'true';
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   console.log('isAuthenticated', isAuthenticated);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,7 +23,6 @@ const App: React.FC = () => {
         const refreshToken = localStorage.getItem('refreshToken');
         console.log('accessToken from useEffect in app.tsx', accessToken);
         console.log('refreshToken from useEffect in app.tsx', refreshToken);
-        console.log('localStorage', localStorage);
 
         if (accessToken) {
           console.log('entering if(accessToken)', accessToken);
@@ -36,6 +33,8 @@ const App: React.FC = () => {
           );
           localStorage.setItem('accessToken', newAccessToken);
           setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
         }
 
         setIsLoading(false);
@@ -44,13 +43,14 @@ const App: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     checkAuthentication();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('isAuthenticated', String(isAuthenticated));
-  }, [isAuthenticated]);
+  console.log('isLoading:', isLoading);
+  console.log('isAuthenticated:', isAuthenticated);
+  if (isLoading) {
+    // You can render a loading indicator or a splash screen here
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <Router>

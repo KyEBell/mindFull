@@ -8,12 +8,20 @@ router.post(
   '/',
   UserLoginController.userLogin,
   (req: Request, res: Response) => {
-    return res.status(200).json({
-      accessToken: req.cookies['accessToken'],
-      refreshToken: req.cookies['refreshToken'],
-
-      message: 'Successful login',
-    });
+    if (res) {
+      console.log(res);
+    }
+    const accessToken = res.locals.accessToken;
+    const refreshToken = res.locals.refreshToken;
+    return res
+      .status(200)
+      .cookie('accessToken', accessToken, { httpOnly: true })
+      .cookie('refreshToken', refreshToken, { httpOnly: true })
+      .json({
+        message: 'Successful login',
+        accessToken,
+        refreshToken,
+      });
   }
 );
 

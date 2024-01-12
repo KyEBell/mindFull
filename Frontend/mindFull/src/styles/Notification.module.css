@@ -9,15 +9,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  opacity: 0; /* Initial opacity */
-  animation: fadeInOut 3s ease-in-out; /* Use the fadeInOut animation */
+  opacity: 0;
+  animation: fadeInOut 3s ease-in-out;
 }
 
 @keyframes fadeInOut {
   0%,
   100% {
     opacity: 0;
-    transform: translateY(-20px); /* Initial position off the screen */
+    transform: translateY(-20px);
   }
   10%,
   90% {

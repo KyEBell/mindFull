@@ -18,7 +18,11 @@ const authenticateToken = (
   res: Response,
   next: NextFunction
 ): void => {
-  const accessToken = req.headers.authorization?.split(' ')[1];
+  const accessToken = req.headers.cookie
+    ?.split('; ')
+    .find((row) => row.startsWith('accessToken='))
+    ?.split('=')[1];
+  // console.log(req.headers);
   console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });

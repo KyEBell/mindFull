@@ -3,10 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 import LogoutModal from './LogoutModal';
 import Notification from './Notification';
+import useNotification from '../hooks/useNotification';
+import NavbarLinks from './NavBarLinks';
+import LogoutButton from '../UI/logoutButton';
 
 interface NavBarProps {
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface HttpError {
+  status: number;
+  message: string;
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -14,30 +22,39 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
+  const logoutURL = 'http://localhost:3000/api/logout/';
 
+  const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
 
-  const openLogoutModal = () => {
-    setIsLogoutModalOpen(true);
-  };
+  const openLogoutModal = () => setIsLogoutModalOpen(true);
+  const closeLogoutModal = () => setIsLogoutModalOpen(false);
 
-  const closeLogoutModal = () => {
-    setIsLogoutModalOpen(false);
-  };
+  const confirmLogout = async () => {
+    try {
+      const response = await fetch(logoutURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-  const handleNotification = (message: string, duration: number) => {
-    setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, duration);
-  };
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
 
-  const confirmLogout = () => {
-    setIsAuthenticated(false);
-    closeLogoutModal();
-    handleNotification('You have been successfully logged out', 3000);
-    navigate('/');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+
+      setIsAuthenticated(false);
+      closeLogoutModal();
+      handleNotification(3000);
+      navigate('/');
+    } catch (error: unknown) {
+      const knownError = error as HttpError;
+      console.error('Logout failed:', knownError.message);
+    }
   };
 
   return (
@@ -47,49 +64,15 @@ const NavBar: React.FC<NavBarProps> = ({
         className={styles.navbarBrand}>
         mindFull
       </Link>
-      <ul className={styles.navbarNav}>
-        {!isAuthenticated && (
-          <>
-            <li className={styles.navItem}>
-              <Link to='/login' className={styles.navLink}>
-                Login
-              </Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link to='/signup' className={styles.navLink}>
-                Signup
-              </Link>
-            </li>
-          </>
-        )}
 
-        <li className={styles.navItem}>
-          <Link to='/about' className={styles.navLink}>
-            About
-          </Link>
-        </li>
-        <li className={styles.navItem}>
-          <Link to='/contact' className={styles.navLink}>
-            Contact
-          </Link>
-        </li>
-        <li className={styles.navItem}>
-          <Link to='/resources' className={styles.navLink}>
-            Resources
-          </Link>
-        </li>
-        {showNotification && (
-          <Notification
-            message='You have been successfully logged out.'
-            onClose={() => setShowNotification(false)}
-          />
-        )}
-        {isAuthenticated && (
-          <li className={styles.navItem}>
-            <button onClick={openLogoutModal}>Logout</button>
-          </li>
-        )}
-      </ul>
+      <NavbarLinks isAuthenticated={isAuthenticated} />
+
+      {showNotification && (
+        <Notification message='You have been successfully logged out.' />
+      )}
+
+      {isAuthenticated && <LogoutButton onClick={openLogoutModal} />}
+
       {isLogoutModalOpen && (
         <LogoutModal
           closeModal={closeLogoutModal}

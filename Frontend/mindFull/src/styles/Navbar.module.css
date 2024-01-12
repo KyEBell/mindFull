@@ -16,10 +16,12 @@
 .navbarNav {
   list-style: none;
   display: flex;
+  margin-left: auto;
 }
 
 .navItem {
-  margin-right: 10px;
+  margin-left: 10px;
+  list-style: none;
 }
 
 .navLink:hover {

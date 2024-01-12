@@ -48,7 +48,6 @@ const App: React.FC = () => {
   console.log('isLoading:', isLoading);
   console.log('isAuthenticated:', isAuthenticated);
   if (isLoading) {
-    // You can render a loading indicator or a splash screen here
     return <h1>Loading...</h1>;
   }
 

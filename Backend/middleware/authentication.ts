@@ -1,12 +1,16 @@
-import { verify, JsonWebTokenError } from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import path from 'path';
-import { Request, Response, NextFunction } from 'express';
+import {
+  verify,
+  JsonWebTokenError,
+  TokenExpiredError,
+  decode,
+} from 'jsonwebtoken';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+import { Request, Response, NextFunction } from 'express';
+import { Token } from './tokens';
+import { User } from '../models/userModel';
 
 interface ExpressRequest extends Request {
-  user?: import('../models/userModel').User;
+  user?: User;
 }
 
 const authenticateToken = (
@@ -14,21 +18,53 @@ const authenticateToken = (
   res: Response,
   next: NextFunction
 ): void => {
-  const accessToken = req.headers.authorization?.split(' ')[1];
-
+  const accessToken = req.headers.cookie
+    ?.split('; ')
+    .find((row) => row.startsWith('accessToken='))
+    ?.split('=')[1];
+  // console.log(req.headers);
+  console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
     return;
   }
+
   try {
+    // const decodedTokenBeforeVerification = decode(accessToken);
+    // console.log(
+    //   'Decoded Token Before Verification:',
+    //   decodedTokenBeforeVerification
+    // );
     const decodedToken = verify(accessToken, process.env.KEY!);
-    req.user = decodedToken as import('../models/userModel').User;
+    const expirationTime = (decodedToken as any).exp * 1000;
+    const currentTime = new Date().getTime();
+    const timeToExpiration = expirationTime - currentTime;
+    console.log('EXPIRATION TIME', timeToExpiration);
+    if (timeToExpiration < 300 * 1000) {
+      const newAccessToken = Token.generateAccessToken(
+        (decodedToken as any).id,
+        (decodedToken as any).username
+      );
+      res.cookie('accessToken', newAccessToken, { httpOnly: true });
+      // res.locals.accessToken = newAccessToken;
+      console.log(
+        'new access token being created from token expiration check function in authentication.ts'
+      );
+    }
+    req.user = decodedToken as User;
+
     return next();
   } catch (error) {
-    console.error(error);
+    console.error(
+      'Token Verification Error from authentication.ts',
+      (error as any).expiredAt
+    );
 
-    if (error instanceof JsonWebTokenError) {
-      res.status(401).json({ error: 'Unauthorized - Invalid Access Token' });
+    if (error instanceof TokenExpiredError) {
+      console.error('Token Verification Error', error);
+      res.status(401).json({
+        error: 'Unauthorized - Invalid Access Token',
+      });
     } else {
       res.status(500).json({ error: 'Internal Server Error' });
     }

@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import pool from '../config/db';
 import { RowDataPacket } from 'mysql2';
 
+//middleware to validateUserInput on login:
+
 export const validateUserInput = async (
   req: Request,
   res: Response,
@@ -10,7 +12,6 @@ export const validateUserInput = async (
   try {
     const { username, email, password } = req.body;
 
-    // Validation checks
     //if username, email or password are left blank
     const uname = username.trim();
     const pass = password.trim();
@@ -29,8 +30,6 @@ export const validateUserInput = async (
     if (!emailRegex.test(mail)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-    //create DBpool
-    // const dbPool = await createPool();
 
     // Checking if userEmail already exists
     const [existingEmailRows] = await pool.execute<RowDataPacket[]>(
@@ -55,7 +54,6 @@ export const validateUserInput = async (
         .status(400)
         .json({ error: 'User with this username already exists' });
     }
-    //returning next back into controller
     next();
   } catch (err) {
     console.log(err);

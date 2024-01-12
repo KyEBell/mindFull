@@ -1,10 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import pool from '../config/db';
-import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { encryptionUtils } from '../utils/encryption';
+import { JournalEntry } from '../models/journalModel';
+import { ExtendedRequest } from '../types';
+import crypto from 'crypto';
 
-interface ExtendedRequest extends Request {
-  user?: import('../models/userModel').User;
-}
+//encryptionKey
+const eKey = encryptionUtils.getEncryptionKey();
 
 //GET ALL JOURNAL ENTRIES===================================================================>
 const getAllJournalEntries = async (
@@ -14,11 +17,39 @@ const getAllJournalEntries = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const [rows] = await pool.execute(
+    const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE user_id = ?',
       [userId]
     );
-    res.locals.allEntries = [rows];
+
+    if (!rows || !Array.isArray(rows)) {
+      throw new Error('Invalid response from the database');
+    }
+
+    //code do decrypt entries from the DB
+    const decryptedEntries = rows.map((entry: any) => {
+      const decryptedEntry = {
+        ...entry,
+        good_thing: encryptionUtils.decryptData(
+          entry.good_thing,
+          eKey,
+          Buffer.from(entry.iv_good_thing, 'hex')
+        ),
+        challenging_thing: encryptionUtils.decryptData(
+          entry.challenging_thing,
+          eKey,
+          Buffer.from(entry.iv_challenging_thing, 'hex')
+        ),
+        learned_thing: encryptionUtils.decryptData(
+          entry.learned_thing,
+          eKey,
+          Buffer.from(entry.iv_learned_thing, 'hex')
+        ),
+      };
+      return decryptedEntry;
+    });
+
+    res.locals.allEntries = decryptedEntries;
     return next();
   } catch (err) {
     console.log('Error fetching journal entries', err);
@@ -43,10 +74,31 @@ const getJournalEntryById = async (
       'SELECT * FROM journal_entries WHERE id = ? AND user_id = ?',
       [journalEntryId, userId]
     );
-    if (journalEntry.length < 1) {
+    if (!journalEntry || journalEntry.length < 1) {
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
-    res.locals.journalEntry = journalEntry[0];
+
+    const entry = journalEntry[0];
+
+    const decryptedEntry = {
+      ...entry,
+      good_thing: encryptionUtils.decryptData(
+        entry.good_thing,
+        eKey,
+        Buffer.from(entry.iv_good_thing, 'hex')
+      ),
+      challenging_thing: encryptionUtils.decryptData(
+        entry.challenging_thing,
+        eKey,
+        Buffer.from(entry.iv_challenging_thing, 'hex')
+      ),
+      learned_thing: encryptionUtils.decryptData(
+        entry.learned_thing,
+        eKey,
+        Buffer.from(entry.iv_learned_thing, 'hex')
+      ),
+    };
+    res.locals.journalEntry = decryptedEntry;
     return next();
   } catch (err) {
     console.log('ERROR FETCHING JOURNAL', err);
@@ -67,15 +119,42 @@ const addJournalEntry = async (
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
+    const ivGT = crypto.randomBytes(16);
+    const ivCT = crypto.randomBytes(16);
+    const ivLT = crypto.randomBytes(16);
 
-    const [newJournalEntryArray] = await pool.execute(
-      'INSERT INTO journal_entries(user_id, good_thing,challenging_thing,learned_thing, user_selected_date) VALUES (?,?,?,?,?)',
-      [userId, good_thing, challenging_thing, learned_thing, user_selected_date]
+    const encryptGT = encryptionUtils.encryptData(good_thing, eKey, ivGT);
+    const encryptCT = encryptionUtils.encryptData(
+      challenging_thing,
+      eKey,
+      ivCT
+    );
+    const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, ivLT);
+    const newJournalEntry: JournalEntry = {
+      id: 0,
+      user_id: userId!,
+      good_thing: encryptGT,
+      challenging_thing: encryptCT,
+      learned_thing: encryptLT,
+      user_selected_date: new Date(user_selected_date),
+    };
+
+    const [newJournalEntryArray] = await pool.execute<ResultSetHeader>(
+      'INSERT INTO journal_entries(user_id, good_thing, challenging_thing, learned_thing, user_selected_date, iv_good_thing, iv_challenging_thing, iv_learned_thing) VALUES (?,?,?,?,?,?,?,?)',
+      [
+        newJournalEntry.user_id,
+        newJournalEntry.good_thing,
+        newJournalEntry.challenging_thing,
+        newJournalEntry.learned_thing,
+        newJournalEntry.user_selected_date,
+        ivGT.toString('hex'),
+        ivCT.toString('hex'),
+        ivLT.toString('hex'),
+      ]
     );
 
-    const newJournalEntryId = (newJournalEntryArray as RowDataPacket[])[0]
-      ?.insertId;
-
+    const newJournalEntryId = (newJournalEntryArray as ResultSetHeader)
+      .insertId;
     const [newEntry] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id = ?',
       [newJournalEntryId]
@@ -110,17 +189,58 @@ const editJournalEntry = async (
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
 
+    // Keeping code here in the event decryption is needed for proper functionality.
+    // const existingEntry = entryToEdit[0];
+    // const existingIVGT = Buffer.from(existingEntry.iv_good_thing, 'hex');
+    // const existingIVCT = Buffer.from(existingEntry.iv_challenging_thing, 'hex');
+    // const existingIVLT = Buffer.from(existingEntry.iv_learned_thing, 'hex');
+    // const decryptedGT = encryptionUtils.decryptData(
+    //   existingEntry.good_thing,
+    //   eKey,
+    //   existingIVGT
+    // );
+    // const decryptedCT = encryptionUtils.decryptData(
+    //   existingEntry.challenging_thing,
+    //   eKey,
+    //   existingIVCT
+    // );
+    // const decryptedLT = encryptionUtils.decryptData(
+    //   existingEntry.learned_thing,
+    //   eKey,
+    //   existingIVLT
+    // );
+
     const { good_thing, challenging_thing, learned_thing } = req.body;
 
+    const newIVGT = crypto.randomBytes(16);
+    const newIVCT = crypto.randomBytes(16);
+    const newIVLT = crypto.randomBytes(16);
+
+    const encryptGT = encryptionUtils.encryptData(good_thing, eKey, newIVGT);
+    const encryptCT = encryptionUtils.encryptData(
+      challenging_thing,
+      eKey,
+      newIVCT
+    );
+    const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, newIVLT);
     await pool.execute(
-      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ? ,learned_thing = ?',
-      [good_thing, challenging_thing, learned_thing]
+      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ?, learned_thing = ?, iv_good_thing = ?, iv_challenging_thing = ?, iv_learned_thing = ? WHERE id = ?',
+      [
+        encryptGT,
+        encryptCT,
+        encryptLT,
+        newIVGT.toString('hex'),
+        newIVCT.toString('hex'),
+        newIVLT.toString('hex'),
+        journalEntryId,
+      ]
     );
     const [updatedEntry] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id= ?',
       [journalEntryId]
     );
     res.locals.updatedEntry = updatedEntry[0];
+    return next();
   } catch (err) {
     console.log('Error editing journal entry', err);
     return res.status(500).json({

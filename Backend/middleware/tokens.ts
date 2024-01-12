@@ -1,29 +1,46 @@
-import { sign } from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import path from 'path';
+import { sign, verify } from 'jsonwebtoken';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
-const generateAccessToken = (userId: number, username: string): string => {
+const expiration = '1h';
+const refresh_expiration = '7d';
+const generateAccessToken = (id: number, username: string): string => {
   const key = process.env.KEY;
 
   if (!key) {
     throw new Error('KEY is not defined in the environment variables.');
   }
 
-  return sign({ userId, username }, key, {
-    expiresIn: '1h',
+  return sign({ id, username }, key, {
+    expiresIn: expiration,
   });
 };
 
-const generateRefreshToken = (userId: number): string => {
+const generateRefreshToken = (id: number): string => {
   const refreshTokenKey = process.env.REFRESH_KEY;
 
   if (!refreshTokenKey) {
     throw new Error('REFRESH_KEY is not defined in the environment variables.');
   }
 
-  return sign({ userId }, refreshTokenKey);
+  return sign({ id }, refreshTokenKey, {
+    expiresIn: refresh_expiration,
+  });
 };
 
-export const TokenFunction = { generateAccessToken, generateRefreshToken };
+const verifyRefreshToken = (token: string): any => {
+  const refreshTokenKey = process.env.REFRESH_KEY;
+
+  if (!refreshTokenKey) {
+    throw new Error('REFRESH_KEY is not defined in the environment variables.');
+  }
+  try {
+    return verify(token, refreshTokenKey);
+  } catch (error) {
+    throw new Error('Invalid Refresh Token');
+  }
+};
+
+export const Token = {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+};

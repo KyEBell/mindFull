@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import NavBar from './components/Navbar';
+import SplashPage from './pages/SplashPage';
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
+import SignUpPage from './pages/SignUpPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import ResourcePage from './pages/ResourcePage';
+import { refreshTokenService } from './services/refreshTokenService';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  console.log('isAuthenticated', isAuthenticated);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        console.log('accessToken from useEffect in app.tsx', accessToken);
+        console.log('refreshToken from useEffect in app.tsx', refreshToken);
+
+        if (accessToken) {
+          console.log('entering if(accessToken)', accessToken);
+          setIsAuthenticated(true);
+        } else if (refreshToken) {
+          const { accessToken: newAccessToken } = await refreshTokenService(
+            refreshToken
+          );
+          localStorage.setItem('accessToken', newAccessToken);
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Token refresh error:', error);
+        setIsLoading(false);
+      }
+    };
+    checkAuthentication();
+  }, []);
+  console.log('isLoading:', isLoading);
+  console.log('isAuthenticated:', isAuthenticated);
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      <NavBar
+        isAuthenticated={isAuthenticated}
+        setIsAuthenticated={setIsAuthenticated}
+      />
+      <Routes>
+        <Route path='/' element={<SplashPage />} />
+        <Route
+          path='/login'
+          element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
+        />
+        <Route
+          path='/dashboard'
+          element={
+            <PrivateRoute
+              element={<Dashboard />}
+              isAuthenticated={isAuthenticated}
+            />
+          }>
+          <Route path='/dashboard' element={<Dashboard />} />
+        </Route>
+        <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='/contact' element={<ContactPage />} />
+        <Route path='/resources' element={<ResourcePage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;

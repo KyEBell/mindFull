@@ -3,14 +3,12 @@ import styles from '.././styles/Notification.module.css';
 
 interface NotificationProps {
   message: string;
-  onClose: () => void;
 }
 
-const Notification: React.FC<NotificationProps> = ({ message, onClose }) => {
+const Notification: React.FC<NotificationProps> = ({ message }) => {
   return (
     <div className={styles.notification}>
       <p>{message}</p>
-      <button onClick={onClose}>Close</button>
     </div>
   );
 };

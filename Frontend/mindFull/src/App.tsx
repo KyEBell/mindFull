@@ -21,8 +21,11 @@ const App: React.FC = () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
+        // console.log('accessToken from useEffect in app.tsx', accessToken);
+        // console.log('refreshToken from useEffect in app.tsx', refreshToken);
 
         if (accessToken) {
+          // console.log('entering if(accessToken)');
           setIsAuthenticated(true);
         } else if (refreshToken) {
           const { accessToken: newAccessToken } = await refreshTokenService(

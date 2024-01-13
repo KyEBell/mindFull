@@ -10,6 +10,7 @@ export const validateUserInput = async (
   next: NextFunction
 ) => {
   try {
+    console.log('in the validate user function on the backend');
     const { username, email, password } = req.body;
 
     //if username, email or password are left blank

@@ -25,7 +25,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
       ...prevData,
       [name]: value,
     }));
-    // console.log('formData', formData);
   };
 
   const handleLogin = async () => {
@@ -33,7 +32,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
       // console.log('Logging in with:', formData);
       const { accessToken, refreshToken } = await userLoginService(
         formData.usernameOrEmail,
-        '',
         formData.password
       );
       console.log('AccessToken:', accessToken);

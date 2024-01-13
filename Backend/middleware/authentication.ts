@@ -39,8 +39,12 @@ const authenticateToken = (
     const expirationTime = (decodedToken as any).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;
-    console.log('EXPIRATION TIME', timeToExpiration);
     if (timeToExpiration < 300 * 1000) {
+      console.log(
+        'EXPIRATION TIME IS TOO SHORT NEED NEW ACCESS TOKEN',
+        timeToExpiration
+      );
+
       const newAccessToken = Token.generateAccessToken(
         (decodedToken as any).id,
         (decodedToken as any).username

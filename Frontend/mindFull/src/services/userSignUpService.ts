@@ -1,34 +1,36 @@
-const url = 'http://localhost:3000/api/login/';
+const url = 'http://localhost:3000/api/signup/';
 
-interface LoginResponse {
+interface SignUpResponse {
   accessToken: string;
   refreshToken: string;
 }
 
-async function userLoginService(
-  identifier: string,
+async function userSignUpService(
+  username: string,
+  email: string,
   password: string
-): Promise<LoginResponse> {
+): Promise<SignUpResponse> {
   try {
-    console.log('username', identifier, 'password', password);
+    console.log('username', username, 'password', password);
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        identifier,
+        username,
+        email,
         password,
       }),
       credentials: 'include',
     });
     if (!response.ok) {
-      throw new Error('Login Failed');
+      throw new Error('SignUp Failed');
     }
 
     console.log('response from login service', response);
-    const data: LoginResponse = await response.json();
-    // console.log('Parsed data:', data);
+    const data: SignUpResponse = await response.json();
+    console.log('Parsed data:', data);
 
     return data;
   } catch (error) {
@@ -37,4 +39,4 @@ async function userLoginService(
   }
 }
 
-export default userLoginService;
+export default userSignUpService;

@@ -11,7 +11,7 @@ import { ExtendedRequest } from '../types';
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, email, password } = req.body;
-
+    // console.log('made it to the create user controller function');
     if (
       username.includes(' ') ||
       email.includes(' ') ||
@@ -42,9 +42,10 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const { id: newUserId, username: newUsername } = newUser;
     const accessToken = Token.generateAccessToken(newUserId, newUsername);
     const refreshToken = Token.generateRefreshToken(newUserId);
-    res.cookie('accessToken', accessToken, { httpOnly: true });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    console.log('access token from createUser', accessToken);
+    res.locals.accessToken = accessToken;
+    res.locals.refreshToken = refreshToken;
+    console.log('refresh token from createUser', refreshToken);
+    console.log('access token from user controller', accessToken);
     return next();
   } catch (err) {
     console.log(err);

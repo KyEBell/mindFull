@@ -20,7 +20,7 @@ router.post(
       .cookie('refreshToken', refreshToken, { httpOnly: true })
       .json({
         message: 'user successfully created',
-        token: accessToken,
+        accessToken: accessToken,
         refreshToken: refreshToken,
       });
   }

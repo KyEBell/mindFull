@@ -22,7 +22,8 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-  const logoutURL = 'http://localhost:3000/api/logout/';
+  const apiUrl = import.meta.env.API_BASE_URL;
+  const logoutURL = apiUrl + 'logout/';
 
   const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);

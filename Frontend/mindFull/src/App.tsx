@@ -10,8 +10,9 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourcePage from './pages/ResourcePage';
 // import { refreshTokenService } from './services/refreshTokenService';
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-console.log(apiUrl, 'api URL');
+// const apiUrl = import.meta.env.VITE_BASE_URL;
+console.log('URL', import.meta.env.VITE_BASE_URL);
+// console.log(apiUrl, 'api URL');
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   console.log('isAuthenticated', isAuthenticated);

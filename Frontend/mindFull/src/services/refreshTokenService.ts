@@ -1,5 +1,5 @@
 // const url = 'http://localhost:3000/api/token/refresh';
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl = import.meta.env.API_BASE_URL;
 interface TokenRefreshResponse {
   accessToken: string;
 }

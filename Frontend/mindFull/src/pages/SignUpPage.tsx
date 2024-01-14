@@ -48,11 +48,10 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ setIsAuthenticated }) => {
           formData.password
         );
         setIsAuthenticated(true);
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        // localStorage.setItem('accessToken', accessToken);
+        // localStorage.setItem('refreshToken', refreshToken);
         console.log('AccessToken from signuppage:', accessToken);
         console.log('RefreshToken from signuppage:', refreshToken);
-        console.log();
         console.log('user is authenticated and signed in was successful');
         navigate('/dashboard');
       }

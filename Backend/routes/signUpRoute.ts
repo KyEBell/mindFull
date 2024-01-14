@@ -13,15 +13,13 @@ router.post(
   (req: Request, res: Response) => {
     const accessToken = res.locals.accessToken;
     const refreshToken = res.locals.refreshToken;
-    console.log('ACCTOKEN', accessToken, 'REFRESH', refreshToken);
+    // console.log('ACCTOKEN', accessToken, 'REFRESH', refreshToken);
     return res
       .status(201)
       .cookie('accessToken', accessToken, { httpOnly: true })
       .cookie('refreshToken', refreshToken, { httpOnly: true })
       .json({
         message: 'user successfully created',
-        accessToken: accessToken,
-        refreshToken: refreshToken,
       });
   }
 );

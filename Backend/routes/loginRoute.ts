@@ -8,9 +8,6 @@ router.post(
   '/',
   UserLoginController.userLogin,
   (req: Request, res: Response) => {
-    if (res) {
-      console.log(res);
-    }
     const accessToken = res.locals.accessToken;
     const refreshToken = res.locals.refreshToken;
     return res

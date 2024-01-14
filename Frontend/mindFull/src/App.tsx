@@ -73,7 +73,10 @@ const App: React.FC = () => {
           }>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>
-        <Route path='/signup' element={<SignUpPage />} />
+        <Route
+          path='/signup'
+          element={<SignUpPage setIsAuthenticated={setIsAuthenticated} />}
+        />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/contact' element={<ContactPage />} />
         <Route path='/resources' element={<ResourcePage />} />

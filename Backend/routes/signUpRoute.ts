@@ -1,8 +1,7 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import { UserController } from '../controllers/UserController';
 import { validateUserInput } from '../middleware/validateUserFunction';
-import { authenticateToken } from '../middleware/authentication';
-import { ExtendedRequest } from '../types';
+import { access } from 'fs';
 
 const router = express.Router();
 
@@ -11,12 +10,19 @@ router.post(
   '/',
   validateUserInput,
   UserController.createUser,
-  authenticateToken,
-  (req: ExtendedRequest, res: Response) => {
-    const accessToken = req.cookies.accessToken;
+  (req: Request, res: Response) => {
+    const accessToken = res.locals.accessToken;
+    const refreshToken = res.locals.refreshToken;
+    console.log('ACCTOKEN', accessToken, 'REFRESH', refreshToken);
     return res
       .status(201)
-      .json({ message: 'user successfully created', accessToken });
+      .cookie('accessToken', accessToken, { httpOnly: true })
+      .cookie('refreshToken', refreshToken, { httpOnly: true })
+      .json({
+        message: 'user successfully created',
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
   }
 );
 

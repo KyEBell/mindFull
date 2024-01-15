@@ -1,4 +1,4 @@
-const url = 'http://localhost:3000/api/signup/';
+const signUpUrl = import.meta.env.VITE_BASE_API_URL + 'signup';
 
 interface SignUpResponse {
   accessToken: string;
@@ -12,7 +12,7 @@ async function userSignUpService(
 ): Promise<SignUpResponse> {
   try {
     console.log('username', username, 'password', password);
-    const response = await fetch(url, {
+    const response = await fetch(signUpUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

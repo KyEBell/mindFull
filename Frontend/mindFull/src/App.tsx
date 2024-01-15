@@ -9,9 +9,9 @@ import SignUpPage from './pages/SignUpPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourcePage from './pages/ResourcePage';
-// import { refreshTokenService } from './services/refreshTokenService';
 
-const appUrl = 'http://localhost:3000/api/';
+const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
+console.log('base api url', baseApiUrl);
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response = await fetch(appUrl + 'check-auth', {
+        const response = await fetch(baseApiUrl + 'check-auth', {
           method: 'GET',
           credentials: 'include',
         });

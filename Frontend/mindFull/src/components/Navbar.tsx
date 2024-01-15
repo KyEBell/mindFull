@@ -22,8 +22,7 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-  const apiUrl = 'http://localhost:3000/api/';
-  const logoutURL = apiUrl + 'logout';
+  const logoutUrl = import.meta.env.VITE_BASE_API_URL + 'logout';
 
   const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -33,7 +32,7 @@ const NavBar: React.FC<NavBarProps> = ({
 
   const confirmLogout = async () => {
     try {
-      const response = await fetch(logoutURL, {
+      const response = await fetch(logoutUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,9 +43,6 @@ const NavBar: React.FC<NavBarProps> = ({
       if (!response.ok) {
         throw new Error('Logout failed');
       }
-
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
 
       setIsAuthenticated(false);
       closeLogoutModal();

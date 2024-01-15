@@ -6,6 +6,7 @@ import loginRoute from './routes/loginRoute';
 import logoutRoute from './routes/logoutRoute';
 import signUpRoute from './routes/signUpRoute';
 import tokenRoute from './routes/tokenRoute';
+import { checkAuthentication } from './middleware/checkAuthentication';
 import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors';
@@ -30,6 +31,7 @@ app.use(cookieParser());
 //routes to use------------------------------------------------->
 
 app.use('/api/signup', signUpRoute);
+app.use('/api/check-auth', checkAuthentication);
 app.use('/api/users', userRoutes);
 app.use('/api/journal-entries', journalRoutes);
 app.use('/api/login', loginRoute);

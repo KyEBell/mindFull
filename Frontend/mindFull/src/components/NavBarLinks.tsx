@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 
 interface NavbarLinksProps {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
 }
 
 const NavbarLinks: React.FC<NavbarLinksProps> = ({ isAuthenticated }) => (

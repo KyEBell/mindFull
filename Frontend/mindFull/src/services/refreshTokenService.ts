@@ -1,5 +1,4 @@
 const url = 'http://localhost:3000/api/token/refresh';
-
 interface TokenRefreshResponse {
   accessToken: string;
 }

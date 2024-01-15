@@ -9,7 +9,7 @@ interface LoginForm {
 }
 
 interface LoginPageProps {
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
@@ -38,10 +38,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
       console.log('RefreshToken:', refreshToken);
 
       setIsAuthenticated(true);
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      console.log('AccessToken:', accessToken);
-      console.log('RefreshToken:', refreshToken);
       console.log('user is authenticated!');
       navigate('/dashboard');
     } catch (error) {

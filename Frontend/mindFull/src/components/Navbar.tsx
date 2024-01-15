@@ -8,8 +8,8 @@ import NavbarLinks from './NavBarLinks';
 import LogoutButton from '../UI/logoutButton';
 
 interface NavBarProps {
-  isAuthenticated: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  isAuthenticated: boolean | null;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
 }
 
 interface HttpError {
@@ -22,8 +22,8 @@ const NavBar: React.FC<NavBarProps> = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.API_BASE_URL;
-  const logoutURL = apiUrl + 'logout/';
+  const apiUrl = 'http://localhost:3000/api/';
+  const logoutURL = apiUrl + 'logout';
 
   const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);

@@ -1,5 +1,4 @@
-// const url = 'http://localhost:3000/api/token/refresh';
-const apiUrl = import.meta.env.API_BASE_URL;
+const url = 'http://localhost:3000/api/token/refresh';
 interface TokenRefreshResponse {
   accessToken: string;
 }
@@ -8,7 +7,7 @@ const refreshTokenService = async (
   refreshToken: string
 ): Promise<TokenRefreshResponse> => {
   try {
-    const response = await fetch(apiUrl + 'token/refresh', {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import userSignUpService from '../services/userSignUpService';
 import validateForm from '../utilities/signUpValidationUtil';
 
 interface SignUpPageProps {
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
 }
 
 interface SignUpForm {

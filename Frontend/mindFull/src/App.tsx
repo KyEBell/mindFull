@@ -10,62 +10,40 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourcePage from './pages/ResourcePage';
 // import { refreshTokenService } from './services/refreshTokenService';
-// const apiUrl = import.meta.env.VITE_BASE_URL;
-console.log('URL', import.meta.env.VITE_BASE_URL);
-// console.log(apiUrl, 'api URL');
+
+const appUrl = 'http://localhost:3000/api/';
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  console.log('isAuthenticated', isAuthenticated);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const checkAuthentication = async () => {
-  //     try {
-  //       const accessToken = localStorage.getItem('accessToken');
-  //       const refreshToken = localStorage.getItem('refreshToken');
-  //       console.log('accessToken from useEffect in app.tsx', accessToken);
-  //       console.log('refreshToken from useEffect in app.tsx', refreshToken);
-
-  //       if (accessToken) {
-  //         console.log('entering if(accessToken)', accessToken);
-  //         setIsAuthenticated(true);
-  //       } else if (refreshToken) {
-  //         const { accessToken: newAccessToken } = await refreshTokenService(
-  //           refreshToken
-  //         );
-  //         localStorage.setItem('accessToken', newAccessToken);
-  //         setIsAuthenticated(true);
-  //       } else {
-  //         setIsAuthenticated(false);
-  //       }
-
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       console.error('Token refresh error:', error);
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   checkAuthentication();
-  // }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  console.log('isAuthenticated from APP tsx', isAuthenticated);
 
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response = await fetch(apiUrl + 'check-auth');
-        const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated);
+        const response = await fetch(appUrl + 'check-auth', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(data.isAuthenticated);
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (error) {
         console.log(
           'authentication failed in the checkAuth catch from frontend',
           error
         );
         setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
     };
     checkAuthentication();
   }, []);
-  // console.log('isAuthenticated:', isAuthenticated);
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return <h1>Loading...</h1>;
   }
 

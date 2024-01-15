@@ -17,7 +17,7 @@ const checkAuthentication = async (
     ?.split('; ')
     .find((row) => row.startsWith('accessToken='))
     ?.split('=')[1];
-
+  console.log('ACCESS TOKEN FROM CHECK AUTHENTICATION MIDDLEWARE', accessToken);
   if (!accessToken) {
     res.status(401).json({ isAuthenticated: false });
     return;

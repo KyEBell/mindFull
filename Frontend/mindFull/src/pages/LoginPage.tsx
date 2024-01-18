@@ -8,12 +8,6 @@ interface LoginForm {
   usernameOrEmail: string;
   password: string;
 }
-
-// interface LoginPageProps {
-//   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
-// }
-
-// const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();

@@ -9,11 +9,12 @@ import SignUpPage from './pages/SignUpPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourcePage from './pages/ResourcePage';
+import useAuth from './hooks/useAuth';
 
 const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
 console.log('base api url', baseApiUrl);
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   console.log('isAuthenticated from APP tsx', isAuthenticated);
 
@@ -42,37 +43,23 @@ const App: React.FC = () => {
       }
     };
     checkAuthentication();
-  }, []);
+  }, [setIsAuthenticated]);
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <Router>
-      <NavBar
-        isAuthenticated={isAuthenticated}
-        setIsAuthenticated={setIsAuthenticated}
-      />
+      <NavBar />
       <Routes>
         <Route path='/' element={<SplashPage />} />
-        <Route
-          path='/login'
-          element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
-        />
+        <Route path='/login' element={<LoginPage />} />
         <Route
           path='/dashboard'
-          element={
-            <PrivateRoute
-              element={<Dashboard />}
-              isAuthenticated={isAuthenticated}
-            />
-          }>
+          element={<PrivateRoute element={<Dashboard />} />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>
-        <Route
-          path='/signup'
-          element={<SignUpPage setIsAuthenticated={setIsAuthenticated} />}
-        />
+        <Route path='/signup' element={<SignUpPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/contact' element={<ContactPage />} />
         <Route path='/resources' element={<ResourcePage />} />

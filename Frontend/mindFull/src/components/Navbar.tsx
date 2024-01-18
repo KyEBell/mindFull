@@ -6,22 +6,16 @@ import Notification from './Notification';
 import useNotification from '../hooks/useNotification';
 import NavbarLinks from './NavBarLinks';
 import LogoutButton from '../UI/logoutButton';
-
-interface NavBarProps {
-  isAuthenticated: boolean | null;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
-}
+import useAuth from '../hooks/useAuth';
 
 interface HttpError {
   status: number;
   message: string;
 }
 
-const NavBar: React.FC<NavBarProps> = ({
-  isAuthenticated,
-  setIsAuthenticated,
-}) => {
+const NavBar: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const logoutUrl = import.meta.env.VITE_BASE_API_URL + 'logout';
 
   const { showNotification, handleNotification } = useNotification();
@@ -62,7 +56,7 @@ const NavBar: React.FC<NavBarProps> = ({
         mindFull
       </Link>
 
-      <NavbarLinks isAuthenticated={isAuthenticated} />
+      <NavbarLinks />
 
       {showNotification && (
         <Notification message='You have been successfully logged out.' />

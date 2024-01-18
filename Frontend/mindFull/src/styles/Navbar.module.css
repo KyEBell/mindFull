@@ -33,3 +33,9 @@
   text-decoration: none;
   font-weight: lighter;
 }
+
+.activeLink {
+  color: #f9bc60;
+  text-decoration: none;
+  font-weight: lighter;
+}

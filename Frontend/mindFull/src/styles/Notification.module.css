@@ -1,11 +1,14 @@
 .notification {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #e74c3c;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #2ecc71; /* Green color */
   color: #fff;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 20px; /* Increased padding */
+  border-radius: 10px; /* Increased border-radius */
+  width: 300px; /* Set a specific width */
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;

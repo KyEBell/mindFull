@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import userLoginService from '../services/userLoginService';
 import styles from '../styles/LoginPage.module.css';
+import useAuth from '../hooks/useAuth';
 
 interface LoginForm {
   usernameOrEmail: string;
   password: string;
 }
 
-interface LoginPageProps {
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
-}
+// interface LoginPageProps {
+//   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
+// }
 
-const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
+// const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useAuth();
   const [formData, setFormData] = useState<LoginForm>({
     usernameOrEmail: '',
     password: '',

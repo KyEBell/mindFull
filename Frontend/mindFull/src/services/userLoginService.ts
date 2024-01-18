@@ -1,4 +1,4 @@
-const url = 'http://localhost:3000/api/login/';
+const loginUrl = import.meta.env.VITE_BASE_API_URL + 'login';
 
 interface LoginResponse {
   accessToken: string;
@@ -6,20 +6,19 @@ interface LoginResponse {
 }
 
 async function userLoginService(
-  username: string,
-  email: string,
+  identifier: string,
   password: string
 ): Promise<LoginResponse> {
   try {
-    console.log('username', username, 'password', password);
-    const response = await fetch(url, {
+    console.log('username', identifier, 'password', password);
+    console.log('loginURL', loginUrl);
+    const response = await fetch(loginUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username,
-        email,
+        identifier,
         password,
       }),
       credentials: 'include',

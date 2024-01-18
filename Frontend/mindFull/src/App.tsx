@@ -9,68 +9,54 @@ import SignUpPage from './pages/SignUpPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ResourcePage from './pages/ResourcePage';
-import { refreshTokenService } from './services/refreshTokenService';
+import useAuth from './hooks/useAuth';
 
+const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
+console.log('base api url', baseApiUrl);
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  console.log('isAuthenticated', isAuthenticated);
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  console.log('isAuthenticated from APP tsx', isAuthenticated);
 
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        console.log('accessToken from useEffect in app.tsx', accessToken);
-        console.log('refreshToken from useEffect in app.tsx', refreshToken);
+        const response = await fetch(baseApiUrl + 'check-auth', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-        if (accessToken) {
-          console.log('entering if(accessToken)', accessToken);
-          setIsAuthenticated(true);
-        } else if (refreshToken) {
-          const { accessToken: newAccessToken } = await refreshTokenService(
-            refreshToken
-          );
-          localStorage.setItem('accessToken', newAccessToken);
-          setIsAuthenticated(true);
+        if (response.ok) {
+          const data = await response.json();
+          setIsAuthenticated(data.isAuthenticated);
         } else {
           setIsAuthenticated(false);
         }
-
-        setIsLoading(false);
       } catch (error) {
-        console.error('Token refresh error:', error);
+        console.log(
+          'authentication failed in the checkAuth catch from frontend',
+          error
+        );
+        setIsAuthenticated(false);
+      } finally {
         setIsLoading(false);
       }
     };
     checkAuthentication();
-  }, []);
-  console.log('isLoading:', isLoading);
-  console.log('isAuthenticated:', isAuthenticated);
+  }, [setIsAuthenticated]);
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <Router>
-      <NavBar
-        isAuthenticated={isAuthenticated}
-        setIsAuthenticated={setIsAuthenticated}
-      />
+      <NavBar />
       <Routes>
         <Route path='/' element={<SplashPage />} />
-        <Route
-          path='/login'
-          element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
-        />
+        <Route path='/login' element={<LoginPage />} />
         <Route
           path='/dashboard'
-          element={
-            <PrivateRoute
-              element={<Dashboard />}
-              isAuthenticated={isAuthenticated}
-            />
-          }>
+          element={<PrivateRoute element={<Dashboard />} />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>
         <Route path='/signup' element={<SignUpPage />} />

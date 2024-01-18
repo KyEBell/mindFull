@@ -1,44 +1,70 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
+import useAuth from '../hooks/useAuth';
 
-interface NavbarLinksProps {
-  isAuthenticated: boolean;
-}
+// interface NavbarLinksProps {
+//   isAuthenticated: boolean | null;
+// }
 
-const NavbarLinks: React.FC<NavbarLinksProps> = ({ isAuthenticated }) => (
-  <ul className={styles.navbarNav}>
-    {!isAuthenticated && (
-      <>
-        <li className={styles.navItem}>
-          <Link to='/login' className={styles.navLink}>
-            Login
-          </Link>
-        </li>
-        <li className={styles.navItem}>
-          <Link to='/signup' className={styles.navLink}>
-            Signup
-          </Link>
-        </li>
-      </>
-    )}
+const NavbarLinks: React.FC = () => {
+  const { isAuthenticated } = useAuth();
 
-    <li className={styles.navItem}>
-      <Link to='/about' className={styles.navLink}>
-        About
-      </Link>
-    </li>
-    <li className={styles.navItem}>
-      <Link to='/contact' className={styles.navLink}>
-        Contact
-      </Link>
-    </li>
-    <li className={styles.navItem}>
-      <Link to='/resources' className={styles.navLink}>
-        Resources
-      </Link>
-    </li>
-  </ul>
-);
+  return (
+    <ul className={styles.navbarNav}>
+      {!isAuthenticated && (
+        <>
+          <li className={styles.navItem}>
+            <NavLink
+              to='/login'
+              className={({ isActive }) =>
+                isActive ? styles.activeLink : styles.navLink
+              }>
+              Login
+            </NavLink>
+          </li>
+          <li className={styles.navItem}>
+            <NavLink
+              to='/signup'
+              className={({ isActive }) =>
+                isActive ? styles.activeLink : styles.navLink
+              }>
+              Signup
+            </NavLink>
+          </li>
+        </>
+      )}
+
+      <li className={styles.navItem}>
+        <NavLink
+          to='/about'
+          className={({ isActive }) =>
+            isActive ? styles.activeLink : styles.navLink
+          }>
+          About
+        </NavLink>
+      </li>
+      <li className={styles.navItem}>
+        <NavLink
+          to='/contact'
+          className={({ isActive }) =>
+            isActive ? styles.activeLink : styles.navLink
+          }>
+          Contact
+        </NavLink>
+      </li>
+      <li className={styles.navItem}>
+        <NavLink
+          to='/resources'
+          className={({ isActive }) =>
+            isActive ? styles.activeLink : styles.navLink
+          }>
+          Resources
+        </NavLink>
+      </li>
+    </ul>
+  );
+};
 
 export default NavbarLinks;

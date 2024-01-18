@@ -1,4 +1,4 @@
-const url = 'http://localhost:3000/api/token/refresh';
+const tokenUrl = import.meta.env.VITE_BASE_API_URL + 'token/refresh';
 
 interface TokenRefreshResponse {
   accessToken: string;
@@ -8,7 +8,7 @@ const refreshTokenService = async (
   refreshToken: string
 ): Promise<TokenRefreshResponse> => {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

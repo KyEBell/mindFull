@@ -15,32 +15,32 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     console.log('IN THE LOGIN CONTROLLER');
-    const { username, email, password } = req.body;
-    console.log('req.body from userLogin', username, email, password);
-    if ((!username && !email) || !password) {
+    const { identifier, password } = req.body;
+    if (!identifier || !password) {
       return res
         .status(400)
         .json({ error: 'Username or email and password must be entered' });
     }
 
     let userRows: User[] = [];
-    if (username) {
+
+    if (!identifier.includes('@')) {
       const [rows] = await pool.execute(
         'SELECT * FROM users WHERE username = ?',
-        [username]
+        [identifier]
       );
       if (isUserArray(rows)) {
         userRows = rows;
       }
-    } else if (email) {
+    } else {
       const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [
-        email,
+        identifier,
       ]);
+
       if (isUserArray(rows)) {
         userRows = rows;
       }
     }
-
     const user = userRows[0];
     if (!user || !('password' in user)) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -50,8 +50,8 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    console.log('USER ID FROM loginController', user.id);
-    console.log('username from login controller', user.username);
+    // console.log('USER ID FROM loginController', user.id);
+    // console.log('username from login controller', user.username);
     const accessToken: string = Token.generateAccessToken(
       user.id,
       user.username

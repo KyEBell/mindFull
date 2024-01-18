@@ -1,25 +1,62 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-
+import Notification from './Notification';
+import useNotification from '../hooks/useNotification';
 interface FormData {
   name: string;
   email: string;
   message: string;
 }
 
+interface HttpError {
+  status: number;
+  message: string;
+}
+
 const ContactForm: React.FC = () => {
+  const contactFormUrl =
+    import.meta.env.VITE_BASE_API_URL + 'contact-form-submit';
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>();
 
+  const { showNotification, handleNotification } = useNotification(); // Initialize the useNotification hook
+
   const formOnSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log('Form data submitted:', data);
+    try {
+      const response = await fetch(contactFormUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('form submitted successfully');
+        reset();
+        handleNotification(3000);
+      } else {
+        console.error('Error Submitting form', result.message);
+        handleNotification(3000);
+      }
+    } catch (error: unknown) {
+      const knownError = error as HttpError;
+      console.error('Error Submitting Form', knownError.message);
+      handleNotification(3000);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(formOnSubmit)}>
+      {showNotification && (
+        <Notification message='Form Submitted Successfully!' />
+      )}
       <div>
         <label htmlFor='name'>Name</label>
         <input

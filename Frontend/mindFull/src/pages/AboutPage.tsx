@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 const AboutPage: React.FC = () => {
   return (
@@ -36,7 +37,7 @@ const AboutPage: React.FC = () => {
       <h2>Contact Us</h2>
       <p>
         Have questions, suggestions, or just want to connect? Feel free to reach
-        out to Kyle at <a href='mailto:KyleEvanBell@gmail.com'>this email</a>.
+        out to Kyle using our <NavLink to='/contact'>Contact Form</NavLink>
       </p>
     </div>
   );

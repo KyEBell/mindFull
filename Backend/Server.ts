@@ -6,6 +6,7 @@ import loginRoute from './routes/loginRoute';
 import logoutRoute from './routes/logoutRoute';
 import signUpRoute from './routes/signUpRoute';
 import tokenRoute from './routes/tokenRoute';
+import formMailer from './routes/formMailer';
 import { checkAuthentication } from './middleware/checkAuthentication';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -37,6 +38,7 @@ app.use('/api/journal-entries', journalRoutes);
 app.use('/api/login', loginRoute);
 app.use('/api/token', tokenRoute);
 app.use('/api/logout', logoutRoute);
+app.use('/api/contact-form-submit', formMailer);
 
 //Get call from backend------------------------------------------------->
 app.get('/', (req: Request, res: Response) => {

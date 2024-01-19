@@ -145,6 +145,7 @@ const addJournalEntry = async (
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
+
     const ivGT = crypto.randomBytes(16);
     const ivCT = crypto.randomBytes(16);
     const ivLT = crypto.randomBytes(16);
@@ -156,13 +157,17 @@ const addJournalEntry = async (
       ivCT
     );
     const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, ivLT);
+    const user_selected_dateString =
+      user_selected_date || new Date().toISOString(); // Use the current date if user_selected_date is not provided
+    const user_selected_dateValue = new Date(user_selected_dateString);
+
     const newJournalEntry: JournalEntry = {
       id: 0,
       user_id: userId!,
       good_thing: encryptGT,
       challenging_thing: encryptCT,
       learned_thing: encryptLT,
-      user_selected_date: new Date(user_selected_date),
+      user_selected_date: user_selected_dateValue,
     };
 
     const [newJournalEntryArray] = await pool.execute<ResultSetHeader>(

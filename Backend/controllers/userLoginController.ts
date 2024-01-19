@@ -60,6 +60,10 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
 
     res.locals.accessToken = accessToken;
     res.locals.refreshToken = refreshToken;
+    res.locals.user = {
+      id: user.id,
+      username: user.username,
+    };
 
     console.log('Access token from userlogincontroller', accessToken);
     return next();

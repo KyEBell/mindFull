@@ -10,7 +10,7 @@ interface LoginForm {
 }
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, setUser } = useAuth();
   const [formData, setFormData] = useState<LoginForm>({
     usernameOrEmail: '',
     password: '',
@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
       // console.log('Logging in with:', formData);
-      const { accessToken, refreshToken } = await userLoginService(
+      const { accessToken, refreshToken, user } = await userLoginService(
         formData.usernameOrEmail,
         formData.password
       );
@@ -35,7 +35,8 @@ const LoginPage: React.FC = () => {
       console.log('RefreshToken:', refreshToken);
 
       setIsAuthenticated(true);
-      console.log('user is authenticated!');
+      setUser(user);
+      // console.log('user is authenticated!', user);
       navigate('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);

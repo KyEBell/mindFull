@@ -3,16 +3,17 @@ import bcrypt from 'bcrypt';
 import { Token } from '../middleware/tokens';
 import { User } from '../models/userModel';
 import pool from '../config/db';
+import { RowDataPacket } from 'mysql2/promise';
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   //helper function to confirm data is correct type
-  function isUserArray(rows: any): rows is User[] {
-    return (
-      Array.isArray(rows) &&
-      rows.length > 0 &&
-      ('username' in rows[0] || 'email' in rows[0])
-    );
-  }
+  // function isUserArray(rows: RowDataPacket[]): rows is User[] {
+  //   return (
+  //     Array.isArray(rows) &&
+  //     rows.length > 0 &&
+  //     ('username' in rows[0] || 'email' in rows[0])
+  //   );
+  // }
   try {
     console.log('IN THE LOGIN CONTROLLER');
     const { identifier, password } = req.body;
@@ -22,26 +23,25 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         .json({ error: 'Username or email and password must be entered' });
     }
 
-    let userRows: User[] = [];
+    let userRows: RowDataPacket[];
 
     if (!identifier.includes('@')) {
-      const [rows] = await pool.execute(
+      const [rows] = await pool.execute<RowDataPacket[]>(
         'SELECT * FROM users WHERE username = ?',
         [identifier]
       );
-      if (isUserArray(rows)) {
-        userRows = rows;
-      }
+      userRows = rows;
     } else {
-      const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [
-        identifier,
-      ]);
-
-      if (isUserArray(rows)) {
-        userRows = rows;
-      }
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT * FROM users WHERE email = ?',
+        [identifier]
+      );
+      userRows = rows;
+      // if (isUserArray(rows)) {
+      //   userRows = rows;
+      // }
     }
-    const user = userRows[0];
+    const user = userRows[0] as User | undefined;
     if (!user || !('password' in user)) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -50,8 +50,6 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    // console.log('USER ID FROM loginController', user.id);
-    // console.log('username from login controller', user.username);
     const accessToken: string = Token.generateAccessToken(
       user.id,
       user.username

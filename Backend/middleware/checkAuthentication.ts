@@ -3,6 +3,7 @@ import { verify, TokenExpiredError } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
 import { User } from '../models/userModel';
+import { DecodedToken } from './authentication';
 
 interface ExpressRequest extends Request {
   user?: User;
@@ -25,14 +26,14 @@ const checkAuthentication = async (
 
   try {
     const decodedToken = verify(accessToken, process.env.KEY!);
-    const expirationTime = (decodedToken as any).exp * 1000;
+    const expirationTime = (decodedToken as DecodedToken).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;
 
     if (timeToExpiration < 300 * 1000) {
       const newAccessToken = Token.generateAccessToken(
-        (decodedToken as any).id,
-        (decodedToken as any).username
+        (decodedToken as DecodedToken).id,
+        (decodedToken as DecodedToken).username
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
     }

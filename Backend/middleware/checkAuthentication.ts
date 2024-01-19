@@ -19,7 +19,7 @@ const checkAuthentication = async (
     ?.split('=')[1];
   console.log('ACCESS TOKEN FROM CHECK AUTHENTICATION MIDDLEWARE', accessToken);
   if (!accessToken) {
-    res.status(401).json({ isAuthenticated: false });
+    res.status(200).json({ isAuthenticated: false });
     return;
   }
 

@@ -8,6 +8,12 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
 import { User } from '../models/userModel';
+export interface DecodedToken {
+  id: number;
+  username: string;
+  iat: number;
+  exp: number;
+}
 
 interface ExpressRequest extends Request {
   user?: User;
@@ -22,7 +28,6 @@ const authenticateToken = (
     ?.split('; ')
     .find((row) => row.startsWith('accessToken='))
     ?.split('=')[1];
-  // console.log(req.headers);
   console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
@@ -30,13 +35,9 @@ const authenticateToken = (
   }
 
   try {
-    // const decodedTokenBeforeVerification = decode(accessToken);
-    // console.log(
-    //   'Decoded Token Before Verification:',
-    //   decodedTokenBeforeVerification
-    // );
     const decodedToken = verify(accessToken, process.env.KEY!);
-    const expirationTime = (decodedToken as any).exp * 1000;
+    console.log('decodedToken', decodedToken);
+    const expirationTime = (decodedToken as DecodedToken).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;
     if (timeToExpiration < 300 * 1000) {
@@ -46,11 +47,10 @@ const authenticateToken = (
       );
 
       const newAccessToken = Token.generateAccessToken(
-        (decodedToken as any).id,
-        (decodedToken as any).username
+        (decodedToken as DecodedToken).id,
+        (decodedToken as DecodedToken).username
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
-      // res.locals.accessToken = newAccessToken;
       console.log(
         'new access token being created from token expiration check function in authentication.ts'
       );
@@ -61,7 +61,7 @@ const authenticateToken = (
   } catch (error) {
     console.error(
       'Token Verification Error from authentication.ts',
-      (error as any).expiredAt
+      (error as TokenExpiredError).expiredAt
     );
 
     if (error instanceof TokenExpiredError) {

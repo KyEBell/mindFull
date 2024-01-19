@@ -12,11 +12,9 @@ import ResourcePage from './pages/ResourcePage';
 import useAuth from './hooks/useAuth';
 
 const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
-console.log('base api url', baseApiUrl);
 const App: React.FC = () => {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  console.log('isAuthenticated from APP tsx', isAuthenticated);
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -29,8 +27,10 @@ const App: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           setIsAuthenticated(data.isAuthenticated);
+          setUser(data.user);
         } else {
           setIsAuthenticated(false);
+          setUser(null);
         }
       } catch (error) {
         console.log(
@@ -43,7 +43,7 @@ const App: React.FC = () => {
       }
     };
     checkAuthentication();
-  }, [setIsAuthenticated]);
+  }, [setIsAuthenticated, setUser, isAuthenticated]);
   if (isLoading) {
     return <h1>Loading...</h1>;
   }

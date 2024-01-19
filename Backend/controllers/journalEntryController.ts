@@ -9,6 +9,31 @@ import crypto from 'crypto';
 //encryptionKey
 const eKey = encryptionUtils.getEncryptionKey();
 
+//database journal entry interface
+interface DatabaseJournalEntry {
+  id: number;
+  user_id: number;
+  good_thing: string;
+  challenging_thing: string;
+  learned_thing: string;
+  iv_good_thing: string;
+  iv_challenging_thing: string;
+  iv_learned_thing: string;
+}
+
+const mapRowToDatabaseEntry = (row: RowDataPacket): DatabaseJournalEntry => {
+  return {
+    id: row.id,
+    user_id: row.user_id,
+    good_thing: row.good_thing,
+    challenging_thing: row.challenging_thing,
+    learned_thing: row.learned_thing,
+    iv_good_thing: row.iv_good_thing,
+    iv_challenging_thing: row.iv_challenging_thing,
+    iv_learned_thing: row.iv_learned_thing,
+  };
+};
+
 //GET ALL JOURNAL ENTRIES===================================================================>
 const getAllJournalEntries = async (
   req: ExtendedRequest,
@@ -27,9 +52,10 @@ const getAllJournalEntries = async (
     }
 
     //code do decrypt entries from the DB
-    const decryptedEntries = rows.map((entry: any) => {
+    const decryptedEntries = rows.map((entry: RowDataPacket) => {
+      const databaseEntry = mapRowToDatabaseEntry(entry);
       const decryptedEntry = {
-        ...entry,
+        ...databaseEntry,
         good_thing: encryptionUtils.decryptData(
           entry.good_thing,
           eKey,

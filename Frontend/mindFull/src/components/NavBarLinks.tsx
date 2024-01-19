@@ -1,12 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css';
 import useAuth from '../hooks/useAuth';
-
-// interface NavbarLinksProps {
-//   isAuthenticated: boolean | null;
-// }
 
 const NavbarLinks: React.FC = () => {
   const { isAuthenticated } = useAuth();

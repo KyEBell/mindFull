@@ -10,6 +10,7 @@ router.post(
   (req: Request, res: Response) => {
     const accessToken = res.locals.accessToken;
     const refreshToken = res.locals.refreshToken;
+    const user = res.locals.user;
     return res
       .status(200)
       .cookie('accessToken', accessToken, { httpOnly: true })
@@ -18,6 +19,7 @@ router.post(
         message: 'Successful login',
         accessToken,
         refreshToken,
+        user,
       });
   }
 );

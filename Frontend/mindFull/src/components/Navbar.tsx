@@ -51,7 +51,7 @@ const NavBar: React.FC = () => {
   return (
     <nav className={styles.navbar}>
       <Link
-        to={isAuthenticated ? '/Dashboard' : '/'}
+        to={isAuthenticated ? '/dashboard' : '/'}
         className={styles.navbarBrand}>
         mindFull
       </Link>

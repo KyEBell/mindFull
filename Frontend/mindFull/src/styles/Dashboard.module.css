@@ -15,6 +15,17 @@
   flex-direction: column;
 }
 
+.formInput {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.contactFormTextArea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .dashboardLink {
   display: inline-block;
   text-align: center;
@@ -27,6 +38,41 @@
   transition: background-color 0.3s ease;
 }
 
+.formInputContainer {
+  background-color: #ffd8c4;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.submitButton {
+  width: 150px;
+  margin: 0 auto;
+  max-width: 100%;
+  background-color: #ffe4ddbb;
+  color: #333;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
 .dashboardLink:hover {
   background-color: #ffd8c4;
+}
+
+.submitButton:hover {
+  background-color: #ffd8c4;
+}
+
+.labelContainer {
+  margin-bottom: 10px;
+}
+
+input[type='text'],
+input[type='email'] {
+  width: 10%; /* You can adjust this width based on your preference */
 }

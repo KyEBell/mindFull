@@ -87,9 +87,11 @@ const SignUpPage: React.FC = () => {
             Email:
             <input
               type='email'
+              id='email'
               name='email'
               value={formData.email}
               onChange={handleFormChange}
+              autoComplete='email'
               onBlur={() =>
                 setTouchedFields((prevTouched) => ({
                   ...prevTouched,
@@ -119,9 +121,11 @@ const SignUpPage: React.FC = () => {
             Username:
             <input
               type='text'
+              id='username'
               name='username'
               value={formData.username}
               onChange={handleFormChange}
+              autoComplete='username'
               onBlur={() =>
                 setTouchedFields((prevTouched) => ({
                   ...prevTouched,
@@ -151,9 +155,11 @@ const SignUpPage: React.FC = () => {
             Password:
             <input
               type='password'
+              id='password'
               name='password'
               value={formData.password}
               onChange={handleFormChange}
+              autoComplete='current-password'
               onBlur={() =>
                 setTouchedFields((prevTouched) => ({
                   ...prevTouched,

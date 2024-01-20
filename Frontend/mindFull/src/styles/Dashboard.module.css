@@ -1,3 +1,32 @@
 .dashH1 {
-  color: #f9bc60;
+  color: #ffe4ddbb;
+}
+
+.dashboardContainer {
+  display: flex;
+}
+
+.dashboardContent {
+  padding: 20px;
+}
+
+.linksContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboardLink {
+  display: inline-block;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: #ffe4ddbb;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.dashboardLink:hover {
+  background-color: #ffd8c4;
 }

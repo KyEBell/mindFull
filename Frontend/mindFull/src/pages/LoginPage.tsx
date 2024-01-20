@@ -51,7 +51,9 @@ const LoginPage: React.FC = () => {
           Username or Email:
           <input
             type='text'
+            id='usernameOrEmail'
             name='usernameOrEmail'
+            autoComplete='username'
             value={formData.usernameOrEmail}
             onChange={handleFormChange}
           />
@@ -60,7 +62,9 @@ const LoginPage: React.FC = () => {
           Password:
           <input
             type='password'
+            id='password'
             name='password'
+            autoComplete='current-password'
             value={formData.password}
             onChange={handleFormChange}
           />

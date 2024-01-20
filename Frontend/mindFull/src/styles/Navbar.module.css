@@ -1,6 +1,5 @@
 .navbar {
-  background-color: #004643;
-  background-color: #001e1d;
+  background-color: #68534d;
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -25,7 +24,7 @@
 }
 
 .navLink:hover {
-  color: #f9bc60;
+  color: #e2c3b7;
 }
 
 .navLink {
@@ -35,7 +34,7 @@
 }
 
 .activeLink {
-  color: #f9bc60;
+  color: #e2c3b7;
   text-decoration: none;
   font-weight: lighter;
 }

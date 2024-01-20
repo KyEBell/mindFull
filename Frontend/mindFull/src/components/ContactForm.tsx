@@ -62,6 +62,7 @@ const ContactForm: React.FC = () => {
         <input
           type='text'
           id='name'
+          autoComplete='name'
           {...register('name', { required: 'Name is required' })}
         />
         {errors.name && <span>{errors.name.message}</span>}
@@ -72,6 +73,7 @@ const ContactForm: React.FC = () => {
         <input
           type='email'
           id='email'
+          autoComplete='email'
           {...register('email', {
             required: 'Email is required',
             pattern: {

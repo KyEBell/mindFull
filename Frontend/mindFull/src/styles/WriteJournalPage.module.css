@@ -17,3 +17,14 @@
   margin: 0 auto;
   max-width: 200px;
 }
+
+.datePickerContainer {
+  margin-top: 10px;
+}
+.datePickerWrapper {
+  width: 100%;
+}
+
+.datePicker {
+  width: 100%;
+}

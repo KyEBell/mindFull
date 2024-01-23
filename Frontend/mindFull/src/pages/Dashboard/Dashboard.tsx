@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
             Write Today's Journal
           </Link>
           <br />
-          <Link to='/review' className={styles.dashboardLink}>
+          <Link to='review' className={styles.dashboardLink}>
             Review Journals
           </Link>
         </div>

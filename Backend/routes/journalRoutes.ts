@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import { JournalEntryController } from '../controllers/JournalEntryController';
 import { authenticateToken } from '../middleware/authentication';
+import { JournalEntryController } from '../controllers/JournalEntryController';
 
 const router = express.Router();
 
@@ -11,6 +11,15 @@ router.get(
   JournalEntryController.getAllJournalEntries,
   (req: Request, res: Response) => {
     return res.status(200).json(res.locals.allEntries);
+  }
+);
+
+router.get(
+  '/summary',
+  authenticateToken,
+  JournalEntryController.getJournalDates,
+  (req: Request, res: Response) => {
+    return res.status(200).json(res.locals.allDates);
   }
 );
 //getJournalEntry by ID

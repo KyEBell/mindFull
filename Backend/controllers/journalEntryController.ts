@@ -21,7 +21,38 @@ const mapRowToDatabaseEntry = (row: RowDataPacket): DatabaseJournalEntry => {
     iv_learned_thing: row.iv_learned_thing,
   };
 };
+//DISPLAY ALL JOURNAL ENTRIES BY DATE===================================================================>
+const getJournalDates = async (
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log('in the getJournalDates controller function');
+    const userId = req.user?.id;
+    const [rows] = await pool.execute<RowDataPacket[]>(
+      'SELECT DISTINCT user_selected_date, id FROM journal_entries WHERE user_id = ?',
+      [userId]
+    );
 
+    if (!rows || !Array.isArray(rows)) {
+      throw new Error('Invalid response from the database');
+    }
+    // console.log('ROWS', rows);
+    const allDates = rows.map((row) => ({
+      id: row.id,
+      user_selected_date: row.user_selected_date,
+    }));
+    // console.log('allDates from journalEntryconroller', allDates);
+    res.locals.allDates = allDates;
+    return next();
+  } catch (err) {
+    console.log('Error fetching journal dates', err);
+    res.status(500).json({
+      error: 'Internal Server Error in Get All Journal Dates Controller',
+    });
+  }
+};
 //GET ALL JOURNAL ENTRIES===================================================================>
 const getAllJournalEntries = async (
   req: ExtendedRequest,
@@ -91,7 +122,7 @@ const getJournalEntryById = async (
       [journalEntryId, userId]
     );
     if (!journalEntry || journalEntry.length < 1) {
-      return res.status(404).json({ error: 'Journal Entry Not Found' });
+      return res.status(404).json({ error: 'Journal Entry By Id Not Found' });
     }
 
     const entry = journalEntry[0];
@@ -287,4 +318,5 @@ export const JournalEntryController = {
   addJournalEntry,
   deleteJournalEntry,
   editJournalEntry,
+  getJournalDates,
 };

@@ -16,6 +16,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   // }
   try {
     console.log('IN THE LOGIN CONTROLLER');
+    console.log('req.body', req.body);
     const { identifier, password } = req.body;
     if (!identifier || !password) {
       return res

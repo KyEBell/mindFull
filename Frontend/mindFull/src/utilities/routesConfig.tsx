@@ -8,6 +8,8 @@ import SignUpPage from '../pages/SignUpPage';
 import AboutPage from '../pages/AboutPage';
 import ContactPage from '../pages/ContactPage';
 import ResourcePage from '../pages/ResourcePage';
+import JournalsPage from '../pages/JournalsPages/JournalsPage';
+import JournalDates from '../pages/JournalsPages/JournalDates';
 
 export const routes = (
   <Routes>
@@ -23,7 +25,9 @@ export const routes = (
         <PrivateRoute>
           <Routes>
             <Route index element={<Dashboard />} />
-            <Route path='write' element={<WriteJournalPage />} />
+            <Route path='/write' element={<WriteJournalPage />} />
+            <Route path='/review' element={<JournalDates />} />
+            <Route path='/review/:id' element={<JournalsPage />} />
           </Routes>
         </PrivateRoute>
       }

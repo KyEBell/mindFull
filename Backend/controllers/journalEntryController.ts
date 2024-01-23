@@ -2,24 +2,12 @@ import { Response, NextFunction } from 'express';
 import pool from '../config/db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import { encryptionUtils } from '../utils/encryption';
-import { JournalEntry } from '../models/journalModel';
+import { JournalEntry, DatabaseJournalEntry } from '../models/journalModel';
 import { ExtendedRequest } from '../types';
 import crypto from 'crypto';
 
 //encryptionKey
 const eKey = encryptionUtils.getEncryptionKey();
-
-//database journal entry interface
-interface DatabaseJournalEntry {
-  id: number;
-  user_id: number;
-  good_thing: string;
-  challenging_thing: string;
-  learned_thing: string;
-  iv_good_thing: string;
-  iv_challenging_thing: string;
-  iv_learned_thing: string;
-}
 
 const mapRowToDatabaseEntry = (row: RowDataPacket): DatabaseJournalEntry => {
   return {
@@ -42,6 +30,8 @@ const getAllJournalEntries = async (
 ) => {
   try {
     const userId = req.user?.id;
+    console.log(userId, 'USER from get all journal entries');
+    console.log('username from get all journal entries', req.user?.username);
     const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE user_id = ?',
       [userId]
@@ -219,27 +209,6 @@ const editJournalEntry = async (
     if (entryToEdit.length < 1) {
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
-
-    // Keeping code here in the event decryption is needed for proper functionality.
-    // const existingEntry = entryToEdit[0];
-    // const existingIVGT = Buffer.from(existingEntry.iv_good_thing, 'hex');
-    // const existingIVCT = Buffer.from(existingEntry.iv_challenging_thing, 'hex');
-    // const existingIVLT = Buffer.from(existingEntry.iv_learned_thing, 'hex');
-    // const decryptedGT = encryptionUtils.decryptData(
-    //   existingEntry.good_thing,
-    //   eKey,
-    //   existingIVGT
-    // );
-    // const decryptedCT = encryptionUtils.decryptData(
-    //   existingEntry.challenging_thing,
-    //   eKey,
-    //   existingIVCT
-    // );
-    // const decryptedLT = encryptionUtils.decryptData(
-    //   existingEntry.learned_thing,
-    //   eKey,
-    //   existingIVLT
-    // );
 
     const { good_thing, challenging_thing, learned_thing } = req.body;
 

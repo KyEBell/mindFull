@@ -1,14 +1,8 @@
-import {
-  verify,
-  JsonWebTokenError,
-  TokenExpiredError,
-  decode,
-} from 'jsonwebtoken';
-
+import { verify, TokenExpiredError } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
 import { User } from '../models/userModel';
-export interface DecodedToken {
+interface DecodedToken {
   id: number;
   username: string;
   iat: number;
@@ -76,4 +70,4 @@ const authenticateToken = (
   }
 };
 
-export { authenticateToken };
+export { authenticateToken, DecodedToken };

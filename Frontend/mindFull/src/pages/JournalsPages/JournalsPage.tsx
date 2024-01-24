@@ -44,7 +44,7 @@ const JournalsPage: React.FC = () => {
       {journalEntry && (
         <>
           <p>Good thing: {journalEntry.good_thing}</p>
-          <p>Challening thing: {journalEntry.challenging_thing}</p>
+          <p>Challenging thing: {journalEntry.challenging_thing}</p>
           <p>Learned thing: {journalEntry.learned_thing}</p>
         </>
       )}

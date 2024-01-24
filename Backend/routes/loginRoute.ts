@@ -10,11 +10,15 @@ router.post(
   (req: Request, res: Response) => {
     const accessToken = res.locals.accessToken;
     const refreshToken = res.locals.refreshToken;
+    const cookieOptions = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 360000),
+    };
     const user = res.locals.user;
     return res
       .status(200)
-      .cookie('accessToken', accessToken, { httpOnly: true })
-      .cookie('refreshToken', refreshToken, { httpOnly: true })
+      .cookie('accessToken', accessToken, cookieOptions)
+      .cookie('refreshToken', refreshToken, cookieOptions)
       .json({
         message: 'Successful login',
         accessToken,

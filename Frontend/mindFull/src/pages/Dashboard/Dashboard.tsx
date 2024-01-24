@@ -2,12 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../../styles/Dashboard.module.css';
 import useAuth from '../../hooks/useAuth';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
   return (
     <div className={styles.dashboardContainer}>
+      <div className={styles.calendarContainer}>
+        <Calendar />
+      </div>
       <div className={styles.dashboardContent}>
         <h1 className={styles.dashH1}>
           Welcome to your dashboard, {user?.username}!

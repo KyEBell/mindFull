@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/Dashboard.module.css';
 import { Link } from 'react-router-dom';
+import { formatSelectedDate } from '../../utilities/dateFormat';
 
 const JournalDates: React.FC = () => {
   const [dates, setDates] = useState<
@@ -23,7 +24,15 @@ const JournalDates: React.FC = () => {
           const data = await response.json();
           if (Array.isArray(data)) {
             // console.log('DATA FROM journalDATES FRONTEND', data);
-            setDates(data);
+            // setDates(data);
+            const formattedDates = data.map((journalEntry) => ({
+              ...journalEntry,
+              user_selected_date: formatSelectedDate(
+                journalEntry.user_selected_date
+              ),
+            }));
+
+            setDates(formattedDates);
           }
         } else {
           console.error('Failed to fetch journal dates');

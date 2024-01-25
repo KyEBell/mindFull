@@ -14,11 +14,15 @@ router.post(
       httpOnly: true,
       expires: new Date(Date.now() + 3600000),
     };
+    const refreshCookieOptions = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 10800000),
+    };
     const user = res.locals.user;
     return res
       .status(200)
       .cookie('accessToken', accessToken, cookieOptions)
-      .cookie('refreshToken', refreshToken, cookieOptions)
+      .cookie('refreshToken', refreshToken, refreshCookieOptions)
       .json({
         message: 'Successful login',
         accessToken,

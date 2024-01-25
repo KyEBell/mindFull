@@ -13,13 +13,22 @@ router.post(
   (req: Request, res: Response) => {
     const accessToken = res.locals.accessToken;
     const refreshToken = res.locals.refreshToken;
-    // console.log('ACCTOKEN', accessToken, 'REFRESH', refreshToken);
+    const cookieOptions = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 3600000),
+    };
+    const refreshCookieOptions = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 10800000),
+    };
     return res
       .status(201)
-      .cookie('accessToken', accessToken, { httpOnly: true })
-      .cookie('refreshToken', refreshToken, { httpOnly: true })
+      .cookie('accessToken', accessToken, cookieOptions)
+      .cookie('refreshToken', refreshToken, refreshCookieOptions)
       .json({
         message: 'user successfully created',
+        accessToken,
+        refreshToken,
       });
   }
 );

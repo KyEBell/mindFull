@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { User } from '../models/userModel';
 import pool from '../config/db';
-import { RowDataPacket } from 'mysql2';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { isValidEmailFormat } from '../utils/isValidEmail';
 import { Token } from '../middleware/tokens';
 import { ExtendedRequest } from '../types';
@@ -29,24 +29,28 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
 
     const newUser: User = {
-      id: 0,
       username: sanitizedUsername,
       email: sanitizedEmail,
       password: hashedPassword,
     };
 
-    await pool.execute(
+    const [result] = await pool.execute<ResultSetHeader>(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [newUser.username, newUser.email, newUser.password]
     );
-    const { id: newUserId, username: newUsername } = newUser;
-    const accessToken = Token.generateAccessToken(newUserId, newUsername);
-    const refreshToken = Token.generateRefreshToken(newUserId);
-    res.locals.accessToken = accessToken;
-    res.locals.refreshToken = refreshToken;
-    console.log('refresh token from createUser', refreshToken);
-    console.log('access token from user controller', accessToken);
-    return next();
+    if (result.insertId) {
+      const newUserId = result.insertId; // Use the inserted id
+      const { username: newUsername } = newUser;
+      const accessToken = Token.generateAccessToken(newUserId, newUsername);
+      const refreshToken = Token.generateRefreshToken(newUserId);
+      res.locals.accessToken = accessToken;
+      res.locals.refreshToken = refreshToken;
+      console.log('refresh token from createUser', refreshToken);
+      console.log('access token from user controller', accessToken);
+      return next();
+    } else {
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to create user' });
@@ -64,7 +68,15 @@ const editUser = async (
     const userId = req.params.id;
     const { email, password, username } = req.body;
 
-    const authenticatedUserId = (req.user as User).id;
+    const authenticatedUser = req.user as User;
+
+    if (!authenticatedUser || authenticatedUser.id === undefined) {
+      return res
+        .status(401)
+        .json({ error: 'Unauthorized - user not logged in' });
+    }
+
+    const authenticatedUserId = authenticatedUser.id;
 
     if (userId !== authenticatedUserId.toString()) {
       return res

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
 import styles from '../styles/DashboardCalendar.module.css';
 
 interface DashboardCalendarProps {
@@ -51,17 +50,29 @@ const DashboardCalendar: React.FC<DashboardCalendarProps> = ({
     fetchDatesWithEntries();
   }, []);
 
-  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+  // const tileContent = ({ date, view }: { date: Date; view: string }) => {
+  //   if (view === 'month') {
+  //     const dateString = date.toISOString().split('T')[0];
+  //     return (
+  //       highlightedDates[dateString] && <div className={styles.highlight}></div>
+  //     );
+  //   }
+  //   return null;
+  // };
+
+  const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
       const dateString = date.toISOString().split('T')[0];
-      return (
-        highlightedDates[dateString] && <div className={styles.highlight}></div>
-      );
+      return highlightedDates[dateString] ? styles.highlightedContent : '';
     }
-    return null;
   };
-
-  return <Calendar onClickDay={onDateClick} tileContent={tileContent} />;
+  return (
+    <Calendar
+      onClickDay={onDateClick}
+      // tileContent={tileContent}
+      tileClassName={tileClassName}
+    />
+  );
 };
 
 export default DashboardCalendar;

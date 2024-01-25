@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { UserController } from '../controllers/UserController';
 import { validateUserInput } from '../middleware/validateUserFunction';
-import { access } from 'fs';
 
 const router = express.Router();
 

@@ -2,16 +2,23 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../../styles/Dashboard.module.css';
 import useAuth from '../../hooks/useAuth';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import DashboardCalendar from '../../components/DashboardCalendar';
 
+//FULL DASHBOARD COMPONENT
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+
+  const handleDateClick = (date: Date) => {
+    console.log('date has been clicked', date);
+  };
 
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.calendarContainer}>
-        <Calendar />
+        <DashboardCalendar
+          // datesWithEntries={datesWithEntries}
+          onDateClick={handleDateClick}
+        />
       </div>
       <div className={styles.dashboardContent}>
         <h1 className={styles.dashH1}>

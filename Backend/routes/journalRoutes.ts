@@ -22,6 +22,15 @@ router.get(
     return res.status(200).json(res.locals.allDates);
   }
 );
+
+// router.get(
+//   '/highlight-dates',
+//   authenticateToken,
+//   JournalEntryController.getJournalDates,
+//   (req: Request, res: Response) => {
+//     return res.status(200).json(res.locals.allDates);
+//   }
+// );
 //getJournalEntry by ID
 router.get(
   '/:id',

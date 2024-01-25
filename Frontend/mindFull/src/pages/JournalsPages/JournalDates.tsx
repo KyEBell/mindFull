@@ -31,6 +31,16 @@ const JournalDates: React.FC = () => {
                 journalEntry.user_selected_date
               ),
             }));
+            formattedDates.sort((a, b) => {
+              const dateA = a.user_selected_date
+                ? new Date(a.user_selected_date)
+                : null;
+              const dateB = b.user_selected_date
+                ? new Date(b.user_selected_date)
+                : null;
+
+              return dateA && dateB ? dateA.getTime() - dateB.getTime() : 0;
+            });
 
             setDates(formattedDates);
           }

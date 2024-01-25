@@ -30,6 +30,8 @@ const getJournalDates = async (
   try {
     console.log('in the getJournalDates controller function');
     const userId = req.user?.id;
+
+    // console.log('USER ID FROM JOURNAL DATES', req.user);
     const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT DISTINCT user_selected_date, id FROM journal_entries WHERE user_id = ?',
       [userId]
@@ -45,6 +47,7 @@ const getJournalDates = async (
     }));
     // console.log('allDates from journalEntryconroller', allDates);
     res.locals.allDates = allDates;
+    // console.log('allDates', allDates);
     return next();
   } catch (err) {
     console.log('Error fetching journal dates', err);

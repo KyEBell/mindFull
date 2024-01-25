@@ -12,7 +12,7 @@ router.post(
     const refreshToken = res.locals.refreshToken;
     const cookieOptions = {
       httpOnly: true,
-      expires: new Date(Date.now() + 360000),
+      expires: new Date(Date.now() + 3600000),
     };
     const user = res.locals.user;
     return res

@@ -31,6 +31,7 @@ const authenticateToken = (
   try {
     const decodedToken = verify(accessToken, process.env.KEY!);
     console.log('decodedToken', decodedToken);
+
     const expirationTime = (decodedToken as DecodedToken).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;

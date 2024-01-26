@@ -30,24 +30,35 @@ const getJournalDates = async (
   try {
     console.log('in the getJournalDates controller function');
     const userId = req.user?.id;
+    const { date } = req.params;
+    console.log('date from controller', date);
 
-    // console.log('USER ID FROM JOURNAL DATES', req.user);
-    const [rows] = await pool.execute<RowDataPacket[]>(
-      'SELECT DISTINCT user_selected_date, id FROM journal_entries WHERE user_id = ?',
-      [userId]
-    );
+    if (date) {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT * FROM journal_entries WHERE user_id = ? AND user_selected_date = ?',
+        [userId, date]
+      );
 
-    if (!rows || !Array.isArray(rows)) {
-      throw new Error('Invalid response from the database');
+      res.locals.allDates = rows;
+    } else {
+      // console.log('USER ID FROM JOURNAL DATES', req.user);
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT DISTINCT user_selected_date, id FROM journal_entries WHERE user_id = ?',
+        [userId]
+      );
+
+      if (!rows || !Array.isArray(rows)) {
+        throw new Error('Invalid response from the database');
+      }
+      // console.log('ROWS', rows);
+      const allDates = rows.map((row) => ({
+        id: row.id,
+        user_selected_date: row.user_selected_date,
+      }));
+      // console.log('allDates from journalEntryconroller', allDates);
+      res.locals.allDates = allDates;
+      // console.log('allDates', allDates);
     }
-    // console.log('ROWS', rows);
-    const allDates = rows.map((row) => ({
-      id: row.id,
-      user_selected_date: row.user_selected_date,
-    }));
-    // console.log('allDates from journalEntryconroller', allDates);
-    res.locals.allDates = allDates;
-    // console.log('allDates', allDates);
     return next();
   } catch (err) {
     console.log('Error fetching journal dates', err);
@@ -169,6 +180,20 @@ const addJournalEntry = async (
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
+
+    // console.log('user_d', userId, 'userselecteddate', user_selected_date);
+
+    // const [existingEntry] = await pool.execute<RowDataPacket[]>(
+    //   'SELECT id FROM journal_entries WHERE user_id = ? AND user_selected_date = ?',
+    //   [userId, user_selected_date]
+    // );
+
+    // console.log(existingEntry, 'existingEntry');
+    // if (existingEntry && existingEntry.length > 0) {
+    //   return res.status(400).json({
+    //     error: 'Journal entry already exists for this date.',
+    //   });
+    // }
 
     const ivGT = crypto.randomBytes(16);
     const ivCT = crypto.randomBytes(16);

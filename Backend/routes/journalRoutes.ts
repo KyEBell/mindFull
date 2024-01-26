@@ -13,7 +13,14 @@ router.get(
     return res.status(200).json(res.locals.allEntries);
   }
 );
-
+router.get(
+  '/date/:date',
+  authenticateToken,
+  JournalEntryController.getJournalDates,
+  (req: Request, res: Response) => {
+    return res.status(200).json(res.locals.allDates);
+  }
+);
 router.get(
   '/summary',
   authenticateToken,

@@ -2,14 +2,40 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../../styles/Dashboard.module.css';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import DashboardCalendar from '../../components/DashboardCalendar';
 
 //FULL DASHBOARD COMPONENT
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const handleDateClick = async (date: Date, id: number) => {
+    const dateString = date.toISOString().split('T')[0];
+    const dateUrl =
+      import.meta.env.VITE_BASE_API_URL + `journal-entries/date/${dateString}`;
 
-  const handleDateClick = (date: Date) => {
-    console.log('date has been clicked', date);
+    try {
+      console.log('dateurl', dateUrl);
+
+      const response = await fetch(dateUrl, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      console.log('DATAAAA', data);
+
+      if (Array.isArray(data) && data.length > 1) {
+        console.log('DATA LENGTH GREATER THAN 1');
+        navigate(`dashboard/review/date/${dateString}`);
+      } else if (Array.isArray(data)) {
+        console.log('DATA LENGTH IS 1');
+        navigate(`/dashboard/review/${id}`);
+      }
+    } catch (error) {
+      console.error('Error fetching entries for the date:', error);
+    }
   };
 
   return (

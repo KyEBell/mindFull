@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { formatSelectedDate } from '../../utilities/dateFormat';
 const JournalsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -8,6 +8,7 @@ const JournalsPage: React.FC = () => {
     good_thing: string;
     challenging_thing: string;
     learned_thing: string;
+    user_selected_date: string;
   } | null>(null);
 
   const journalsUrl =
@@ -40,7 +41,12 @@ const JournalsPage: React.FC = () => {
 
   return (
     <div>
-      <h2>Journal Entry for:</h2>
+      <h2>
+        Journal Entry for{' '}
+        {journalEntry
+          ? formatSelectedDate(journalEntry.user_selected_date)
+          : ''}
+      </h2>
       {journalEntry && (
         <>
           <p>Good thing: {journalEntry.good_thing}</p>

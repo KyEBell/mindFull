@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/Dashboard.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { formatSelectedDate } from '../../utilities/dateFormat';
 
 const JournalDates: React.FC = () => {
+  const { date } = useParams<{ date?: string }>();
+
   const [dates, setDates] = useState<
     Array<{ id: number; user_selected_date: string }>
   >([]);
 
-  const journalDatesUrl =
-    import.meta.env.VITE_BASE_API_URL + 'journal-entries/summary';
-  // console.log('journaldatesURL', journalDatesUrl);
+  const journalDatesUrl = date
+    ? import.meta.env.VITE_BASE_API_URL + `journal-entries/date/${date}`
+    : import.meta.env.VITE_BASE_API_URL + 'journal-entries/summary';
+  console.log('journaldatesURL', journalDatesUrl);
 
   useEffect(() => {
     const fetchDates = async () => {
@@ -58,7 +61,9 @@ const JournalDates: React.FC = () => {
   // console.log('DATES', dates);
   return (
     <div>
-      <h2 className={styles.dashH1}>Journal Entries by Date:</h2>
+      <h2 className={styles.dashH1}>
+        {date ? `Journal Entries for ${date}` : 'All Journal Entries'}:
+      </h2>
       <ul>
         {dates.map((element) => (
           <li key={element.id}>

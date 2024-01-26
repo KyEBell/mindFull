@@ -5,7 +5,7 @@ import styles from '../styles/DashboardCalendar.module.css';
 
 interface DashboardCalendarProps {
   //   datesWithEntries: string[];
-  onDateClick: (date: Date) => void;
+  onDateClick: (date: Date, id: number) => void;
 }
 const journalDatesUrl =
   import.meta.env.VITE_BASE_API_URL + 'journal-entries/summary';
@@ -15,7 +15,7 @@ const DashboardCalendar: React.FC<DashboardCalendarProps> = ({
   onDateClick,
 }) => {
   const [highlightedDates, setHighlightedDates] = useState<{
-    [key: string]: boolean;
+    [key: string]: { highlighted: boolean; id: number };
   }>({});
 
   useEffect(() => {
@@ -27,18 +27,19 @@ const DashboardCalendar: React.FC<DashboardCalendarProps> = ({
           credentials: 'include',
         });
         const data = await response.json();
-
+        console.log('data from dashboard useEffect', data);
         if (Array.isArray(data)) {
           //   console.log('data from backend', data);
           const datesObject = data.reduce((acc, entry) => {
             const dateString = new Date(entry.user_selected_date)
               .toISOString()
               .split('T')[0];
-            acc[dateString] = true;
+            acc[dateString] = {
+              highlighted: true,
+              id: entry.id,
+            };
             return acc;
-          }, {} as { [key: string]: boolean });
-
-          console.log('dates object', datesObject);
+          }, {} as { [key: string]: { highlighted: boolean; id: number } });
 
           setHighlightedDates(datesObject);
         }
@@ -66,10 +67,18 @@ const DashboardCalendar: React.FC<DashboardCalendarProps> = ({
       return highlightedDates[dateString] ? styles.highlightedContent : '';
     }
   };
+
+  console.log('highlightedDates', highlightedDates);
   return (
     <Calendar
-      onClickDay={onDateClick}
-      // tileContent={tileContent}
+      onClickDay={(date) => {
+        const dateString = date.toISOString().split('T')[0];
+        const idInfo = highlightedDates[dateString];
+        if (idInfo) {
+          const { id } = idInfo;
+          onDateClick(date, id);
+        }
+      }}
       tileClassName={tileClassName}
     />
   );

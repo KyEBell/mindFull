@@ -45,7 +45,7 @@ const getJournalDates = async (
       id: row.id,
       user_selected_date: row.user_selected_date,
     }));
-    // console.log('allDates from journalEntryconroller', allDates);
+    console.log('allDates from journalEntryconroller', allDates);
     res.locals.allDates = allDates;
     // console.log('allDates', allDates);
     return next();

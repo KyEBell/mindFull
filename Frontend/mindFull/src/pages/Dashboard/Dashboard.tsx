@@ -2,14 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../../styles/Dashboard.module.css';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import DashboardCalendar from '../../components/DashboardCalendar';
 
 //FULL DASHBOARD COMPONENT
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-
-  const handleDateClick = (date: Date) => {
-    console.log('date has been clicked', date);
+  const navigate = useNavigate();
+  const handleDateClick = (date: Date, id: number) => {
+    navigate(`/dashboard/review/${id}`);
   };
 
   return (

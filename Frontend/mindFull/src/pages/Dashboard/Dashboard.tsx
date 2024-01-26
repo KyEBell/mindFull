@@ -9,8 +9,33 @@ import DashboardCalendar from '../../components/DashboardCalendar';
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const handleDateClick = (date: Date, id: number) => {
-    navigate(`/dashboard/review/${id}`);
+  const handleDateClick = async (date: Date, id: number) => {
+    const dateString = date.toISOString().split('T')[0];
+    const dateUrl =
+      import.meta.env.VITE_BASE_API_URL + `journal-entries/date/${dateString}`;
+
+    try {
+      console.log('dateurl', dateUrl);
+
+      const response = await fetch(dateUrl, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      console.log('DATAAAA', data);
+
+      if (Array.isArray(data) && data.length > 1) {
+        console.log('DATA LENGTH GREATER THAN 1');
+        navigate(`dashboard/review/date/${dateString}`);
+      } else if (Array.isArray(data)) {
+        console.log('DATA LENGTH IS 1');
+        navigate(`/dashboard/review/${id}`);
+      }
+    } catch (error) {
+      console.error('Error fetching entries for the date:', error);
+    }
   };
 
   return (

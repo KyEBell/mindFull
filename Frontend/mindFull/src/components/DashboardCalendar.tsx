@@ -74,7 +74,6 @@ const DashboardCalendar: React.FC<DashboardCalendarProps> = ({
       onClickDay={(date) => {
         const dateString = date.toISOString().split('T')[0];
         const idInfo = highlightedDates[dateString];
-
         if (idInfo) {
           const { id } = idInfo;
           onDateClick(date, id);

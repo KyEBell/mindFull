@@ -27,6 +27,10 @@ export const routes = (
             <Route index element={<Dashboard />} />
             <Route path='/write' element={<WriteJournalPage />} />
             <Route path='/review' element={<JournalDates />} />
+            <Route
+              path='/dashboard/review/date/:date'
+              element={<JournalDates />}
+            />
             <Route path='/review/:id' element={<JournalsPage />} />
           </Routes>
         </PrivateRoute>

@@ -49,7 +49,7 @@ const JournalsPage: React.FC = () => {
   return (
     <div>
       <h2>
-        Journal Entry for
+        Journal Entry for{' '}
         {journalEntry
           ? formatSelectedDate(journalEntry.user_selected_date)
           : ''}

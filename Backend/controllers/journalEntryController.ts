@@ -259,17 +259,23 @@ const editJournalEntry = async (
 ) => {
   try {
     const userId = req.user?.id;
+    console.log('in the edit jouranlEntryController - userId', userId);
+
     const journalEntryId = req.params.id;
     const [entryToEdit] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id = ? AND user_id = ?',
       [journalEntryId, userId]
     );
 
+    console.log('entry to edit', entryToEdit);
     if (entryToEdit.length < 1) {
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
 
     const { good_thing, challenging_thing, learned_thing } = req.body;
+
+    console.log('req.body', req.body);
+    console.log('good thing', good_thing);
 
     const newIVGT = crypto.randomBytes(16);
     const newIVCT = crypto.randomBytes(16);
@@ -298,6 +304,7 @@ const editJournalEntry = async (
       'SELECT * FROM journal_entries WHERE id= ?',
       [journalEntryId]
     );
+    console.log('updated entry', updatedEntry);
     res.locals.updatedEntry = updatedEntry[0];
     return next();
   } catch (err) {

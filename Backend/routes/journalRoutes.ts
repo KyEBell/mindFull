@@ -65,6 +65,7 @@ router.put(
   authenticateToken,
   JournalEntryController.editJournalEntry,
   (req: Request, res: Response) => {
+    console.log('exiting edit journal');
     return res.status(200).json(res.locals.updatedEntry);
   }
 );

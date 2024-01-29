@@ -79,3 +79,37 @@ input[type='text'],
 input[type='email'] {
   width: 10%; /* You can adjust this width based on your preference */
 }
+
+.journalEntryItem {
+  background-color: #ffd8c4;
+  border-radius: 8px;
+  margin: 8px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+}
+
+.journalEntryItem a {
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px;
+  color: #333;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.journalEntryItem a:hover {
+  background-color: #ffe4ddbb;
+  cursor: pointer;
+}
+.journalDatesList {
+  list-style: none;
+  text-decoration: none;
+  width: 50%;
+}
+
+.journalEntryDate {
+  margin-left: auto;
+}

@@ -60,15 +60,20 @@ const JournalDates: React.FC = () => {
 
   // console.log('DATES', dates);
   return (
-    <div>
+    <div className={styles.dashboardContainer}>
       <h2 className={styles.dashH1}>
         {date ? `Journal Entries for ${date}` : 'All Journal Entries'}:
       </h2>
-      <ul>
-        {dates.map((element) => (
-          <li key={element.id}>
-            <Link to={`/dashboard/review/${element.id}`}>
-              {element.user_selected_date}
+      <ul className={styles.journalDatesList}>
+        {dates.map((element, index) => (
+          <li key={element.id} className={styles.journalEntryItem}>
+            <Link
+              to={`/dashboard/review/${element.id}`}
+              className={styles.journalEntryItem}>
+              Entry {index + 1}
+              <span className={styles.journalEntryDate}>
+                {element.user_selected_date}
+              </span>
             </Link>
           </li>
         ))}

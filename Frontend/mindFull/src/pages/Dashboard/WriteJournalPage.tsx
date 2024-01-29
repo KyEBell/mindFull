@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
+import SuccessModal from '../../components/SuccessModal';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/WriteJournalPage.module.css';
 interface JournalForm {
   good_thing: string;
@@ -14,8 +16,10 @@ interface JournalForm {
 const WriteJournalPage: React.FC = () => {
   const { register, handleSubmit, getValues } = useForm<JournalForm>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const writeJournalUrl = import.meta.env.VITE_BASE_API_URL + 'journal-entries';
 
+  const navigate = useNavigate();
   const handleSubmission = handleSubmit(async (data: JournalForm) => {
     data.user_selected_date = selectedDate;
     try {
@@ -30,6 +34,7 @@ const WriteJournalPage: React.FC = () => {
 
       if (response.ok) {
         console.log('Journal Entry Added Successfully');
+        setShowSuccessModal(true);
       } else {
         console.error('failed to add journal', await response.text());
       }
@@ -37,6 +42,11 @@ const WriteJournalPage: React.FC = () => {
       console.log('Error adding journal entry', error);
     }
   });
+
+  const returnToDashboard = () => {
+    setShowSuccessModal(false);
+    navigate('/dashboard');
+  };
 
   return (
     <>
@@ -94,6 +104,12 @@ const WriteJournalPage: React.FC = () => {
           Submit
         </button>
       </form>
+      {showSuccessModal && (
+        <SuccessModal
+          returnToDashboard={returnToDashboard}
+          message='Journal entry added successfully!'
+        />
+      )}
     </>
   );
 };

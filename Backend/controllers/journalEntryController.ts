@@ -136,7 +136,7 @@ const getJournalEntryById = async (
       [journalEntryId, userId]
     );
     if (!journalEntry || journalEntry.length < 1) {
-      return res.status(404).json({ error: 'Journal Entry By Id Not Found' });
+      return res.status(401).json({ error: 'Journal Entry By Id Not Found' });
     }
 
     const entry = journalEntry[0];

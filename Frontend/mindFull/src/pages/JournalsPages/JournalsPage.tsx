@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { formatSelectedDate } from '../../utilities/dateFormat';
+
 const JournalsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [journalEntry, setJournalEntry] = useState<{
     good_thing: string;
@@ -27,7 +29,12 @@ const JournalsPage: React.FC = () => {
           const data = await response.json();
           setJournalEntry(data);
         } else {
-          console.error('Failed to fetch journal entry');
+          if (response.status === 401) {
+            console.error('unauthorized');
+            navigate('/login');
+          } else {
+            console.error('failed to fetch journal entry');
+          }
         }
       } catch (error) {
         console.error('Error fetching journal entry:', error);
@@ -35,14 +42,14 @@ const JournalsPage: React.FC = () => {
     };
 
     fetchJournalEntry();
-  }, [id, journalsUrl]);
+  }, [id, journalsUrl, navigate]);
 
   console.log('journalENTRY', journalEntry);
 
   return (
     <div>
       <h2>
-        Journal Entry for{' '}
+        Journal Entry for
         {journalEntry
           ? formatSelectedDate(journalEntry.user_selected_date)
           : ''}

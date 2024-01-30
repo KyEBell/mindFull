@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DatePicker from 'react-calendar';
 
 interface EditJournalEntryFormProps {
   initialValues: {
@@ -71,9 +72,15 @@ const EditJournalEntryForm: React.FC<EditJournalEntryFormProps> = ({
       <label>
         Date:
         <input
-          type='date'
+          type='text'
           value={editedDate}
-          onChange={(e) => setEditedDate(e.target.value)}
+          onChange={(e) => {
+            const enteredDate = e.target.value;
+            const formattedDate = new Date(enteredDate)
+              .toISOString()
+              .split('T')[0];
+            setEditedDate(formattedDate);
+          }}
         />
       </label>
       <button type='submit'>Update Entry</button>

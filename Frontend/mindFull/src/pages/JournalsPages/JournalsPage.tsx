@@ -4,7 +4,6 @@ import { formatSelectedDate } from '../../utilities/dateFormat';
 import EditJournalEntryForm from '../../components/EditJournalEntryForm';
 import { updateJournalEntry } from '../../services/journalApiService';
 import useAuth from '../../hooks/useAuth';
-import isEqual from 'lodash/isEqual';
 import { JournalEntry } from '../../services/journalApiService';
 
 const JournalsPage: React.FC = () => {
@@ -23,15 +22,6 @@ const JournalsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  // const [journalEntry, setJournalEntry] = useState<{
-  //   id: number;
-  //   user_id: number;
-  //   good_thing: string;
-  //   challenging_thing: string;
-  //   learned_thing: string;
-  //   user_selected_date: string;
-  // } | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
 
   const journalsUrl =
@@ -45,27 +35,15 @@ const JournalsPage: React.FC = () => {
           method: 'GET',
           credentials: 'include',
         });
-        console.log('ID', id);
         if (response.ok) {
-          console.log('RESPONSE OK');
           const data = await response.json();
           setJournalEntry((prevJournalEntry) => {
             console.log('prevJournalEntry:', prevJournalEntry);
             console.log('data:', data);
-
-            // Update only if the fetched data is different
-            if (!isEqual(prevJournalEntry, data)) {
-              console.log('is not equal is hitting ');
-              return {
-                ...data,
-                entry_date: new Date(
-                  data.user_selected_date
-                ).toLocaleDateString('en-US'),
-              };
-            }
-
-            console.log('returning prevJournalEntry');
-            return prevJournalEntry;
+            return {
+              ...data,
+              entry_date: new Date(data.user_selected_date).toISOString(),
+            };
           });
         } else {
           if (response.status === 401) {
@@ -81,7 +59,7 @@ const JournalsPage: React.FC = () => {
     };
 
     fetchJournalEntry();
-  }, [id, journalsUrl, navigate]);
+  }, [id, journalsUrl, navigate, editMode]);
 
   if (!user) {
     return null;
@@ -112,44 +90,52 @@ const JournalsPage: React.FC = () => {
     good_thing: string;
     challenging_thing: string;
     learned_thing: string;
-    user_selected_date: string;
+    user_selected_date: string | Date;
   }) => {
     if (!journalEntry) {
       console.error('Journal entry is null');
       return;
     }
     const { user_selected_date, ...rest } = editedValues;
+    // console.log('USER SELECTED DATE', user_selected_date);
+    // const formattedDate =
+    //   typeof user_selected_date === 'string'
+    //     ? (user_selected_date as string)
+    //     : (user_selected_date as Date).toISOString().split('T')[0];
 
-    let formattedDate: string;
-    const isDate = (value: string | Date): value is Date =>
-      value instanceof Date;
+    // console.log('formattedDate', formattedDate);
 
-    if (isDate(user_selected_date)) {
-      formattedDate = user_selected_date.toISOString().split('T')[0];
-    } else {
-      formattedDate = new Date(user_selected_date).toLocaleDateString('en-US');
-    }
     if (!id) {
       console.error('Journal entry id is undefined');
       return;
     }
-    const success = await updateJournalEntry(id, user.id, {
+
+    const success = await updateJournalEntry({
       id: journalEntry.id,
       user_id: journalEntry.user_id,
       entry_date: journalEntry.entry_date,
-      user_selected_date: formattedDate,
+      user_selected_date: user_selected_date,
       ...rest,
     });
 
     if (success) {
-      setJournalEntry((prevJournalEntry) => ({
-        ...prevJournalEntry,
-        ...editedValues,
-        entry_date: formattedDate,
-      }));
+      setJournalEntry((prevJournalEntry: JournalEntry | null) => {
+        if (prevJournalEntry) {
+          console.log('previous journal entry is truthy');
+          return {
+            ...prevJournalEntry,
+            ...editedValues,
+            user_selected_date: user_selected_date,
+          };
+        } else {
+          return prevJournalEntry;
+        }
+      });
       setEditMode(false);
     }
   };
+
+  console.log('JOURNAL ENTRY', journalEntry);
   return (
     <div>
       <h2>

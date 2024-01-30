@@ -267,12 +267,13 @@ const editJournalEntry = async (
       [journalEntryId, userId]
     );
 
-    console.log('entry to edit', entryToEdit);
+    // console.log('entry to edit', entryToEdit);
     if (entryToEdit.length < 1) {
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
 
-    const { good_thing, challenging_thing, learned_thing } = req.body;
+    const { good_thing, challenging_thing, learned_thing, user_selected_date } =
+      req.body;
 
     console.log('req.body', req.body);
     console.log('good thing', good_thing);
@@ -289,7 +290,7 @@ const editJournalEntry = async (
     );
     const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, newIVLT);
     await pool.execute(
-      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ?, learned_thing = ?, iv_good_thing = ?, iv_challenging_thing = ?, iv_learned_thing = ? WHERE id = ?',
+      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ?, learned_thing = ?, iv_good_thing = ?, iv_challenging_thing = ?, iv_learned_thing = ?, user_selected_date = ? WHERE id = ?',
       [
         encryptGT,
         encryptCT,
@@ -297,6 +298,7 @@ const editJournalEntry = async (
         newIVGT.toString('hex'),
         newIVCT.toString('hex'),
         newIVLT.toString('hex'),
+        user_selected_date,
         journalEntryId,
       ]
     );

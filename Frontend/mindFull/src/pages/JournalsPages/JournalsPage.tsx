@@ -2,11 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { formatSelectedDate } from '../../utilities/dateFormat';
 import EditJournalEntryForm from '../../components/EditJournalEntryForm';
-import { updateJournalEntry } from '../../services/journalApiService';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
+import {
+  JournalEntry,
+  updateJournalEntry,
+  deleteJournalEntry,
+} from '../../services/journalApiService';
 import useAuth from '../../hooks/useAuth';
-import { JournalEntry } from '../../services/journalApiService';
-
+import SuccessModal from '../../components/SuccessModal';
 const JournalsPage: React.FC = () => {
+  const [showConfirmationModal, setShowConfirmationModal] =
+    useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editedValues, setEditedValues] = useState<{
     good_thing: string;
@@ -19,13 +26,19 @@ const JournalsPage: React.FC = () => {
     learned_thing: '',
     user_selected_date: '',
   });
+  const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
+
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
 
   const journalsUrl =
     import.meta.env.VITE_BASE_API_URL + `journal-entries/${id}`;
+
+  const returnToDashboard = () => {
+    setShowSuccessModal(false);
+    navigate('/dashboard');
+  };
 
   useEffect(() => {
     const fetchJournalEntry = async () => {
@@ -39,7 +52,6 @@ const JournalsPage: React.FC = () => {
           setJournalEntry(() => {
             return {
               ...data,
-              entry_date: new Date(data.user_selected_date).toISOString(),
             };
           });
         } else {
@@ -61,9 +73,9 @@ const JournalsPage: React.FC = () => {
   if (!user) {
     return null;
   }
-  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = async (
-    event
-  ) => {
+  const handleEditButtonClick: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async (event) => {
     event.preventDefault();
     setEditedValues(
       (prevEditedValues) =>
@@ -103,7 +115,6 @@ const JournalsPage: React.FC = () => {
     const success = await updateJournalEntry({
       id: journalEntry.id,
       user_id: journalEntry.user_id,
-      entry_date: journalEntry.entry_date,
       user_selected_date: user_selected_date,
       ...rest,
     });
@@ -122,6 +133,26 @@ const JournalsPage: React.FC = () => {
       });
       setEditMode(false);
     }
+  };
+
+  const handleDeleteButtonClick = () => {
+    setShowConfirmationModal(true);
+  };
+  const handleConfirmDelete = async () => {
+    if (journalEntry && id) {
+      console.log('JOURNAL ENTRY', journalEntry, 'ID', id);
+      const success = await deleteJournalEntry(id);
+      if (success) {
+        setShowConfirmationModal(false);
+
+        setShowSuccessModal(true);
+      }
+    }
+  };
+
+  const handleCancelDelete = () => {
+    // Close the confirmation modal
+    setShowConfirmationModal(false);
   };
 
   return (
@@ -143,10 +174,23 @@ const JournalsPage: React.FC = () => {
             <p>Good thing: {journalEntry.good_thing}</p>
             <p>Challenging thing: {journalEntry.challenging_thing}</p>
             <p>Learned thing: {journalEntry.learned_thing}</p>
-            <button onClick={(event) => handleButtonClick(event)}>
+            <button onClick={(event) => handleEditButtonClick(event)}>
               Edit Entry
             </button>
-            <button>Delete Entry</button>
+            <button onClick={handleDeleteButtonClick}>Delete Entry</button>
+            {showConfirmationModal && (
+              <ConfirmDeleteModal
+                message='Are you sure you want to delete this journal entry?'
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+              />
+            )}
+            {showSuccessModal && (
+              <SuccessModal
+                message='Journal entry deleted successfully'
+                returnToDashboard={returnToDashboard}
+              />
+            )}
           </>
         ))}
     </div>

@@ -22,7 +22,7 @@ const authenticateToken = (
     ?.split('; ')
     .find((row) => row.startsWith('accessToken='))
     ?.split('=')[1];
-  console.log('access token from authenticate token', accessToken);
+  // console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
     return;
@@ -30,7 +30,7 @@ const authenticateToken = (
 
   try {
     const decodedToken = verify(accessToken, process.env.KEY!);
-    console.log('decodedToken', decodedToken);
+    // console.log('decodedToken', decodedToken);
 
     const expirationTime = (decodedToken as DecodedToken).exp * 1000;
     const currentTime = new Date().getTime();

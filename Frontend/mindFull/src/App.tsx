@@ -11,7 +11,6 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('in use effect in app.tsx');
     const checkAuthentication = async () => {
       try {
         const response = await fetch(baseApiUrl + 'check-auth', {

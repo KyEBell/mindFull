@@ -58,7 +58,6 @@ const WriteJournalPage: React.FC = () => {
             <textarea
               className={styles.journalPageTextArea}
               {...register('good_thing')}
-              // onChange={(e) => setValue('good_thing', e.target.value)}
             />
           </label>
         </div>
@@ -68,7 +67,6 @@ const WriteJournalPage: React.FC = () => {
             <textarea
               className={styles.journalPageTextArea}
               {...register('challenging_thing')}
-              // onChange={(e) => setValue('challenging_thing', e.target.value)}
             />
           </label>
         </div>
@@ -78,26 +76,24 @@ const WriteJournalPage: React.FC = () => {
             <textarea
               className={styles.journalPageTextArea}
               {...register('learned_thing')}
-              // onChange={(e) => setValue('learned_thing', e.target.value)}
             />
           </label>
         </div>
         <div className={styles.labelContainer}>
-          <label>
-            Date:
-            <div className={styles.datePickerContainer}>
-              <DatePicker
-                selected={selectedDate}
-                value={getValues('user_selected_date')
-                  ?.toISOString()
-                  .slice(0, 10)}
-                dateFormat='yyyy-MM-dd'
-                wrapperClassName={styles.datePickerWrapper}
-                className={styles.datePicker}
-                onChange={(date: Date) => setSelectedDate(date)}
-              />
-            </div>
-          </label>
+          <label>Date:</label>
+
+          <div className={styles.datePickerContainer}>
+            <DatePicker
+              selected={selectedDate}
+              value={getValues('user_selected_date')
+                ?.toISOString()
+                .slice(0, 10)}
+              dateFormat='yyyy-MM-dd'
+              wrapperClassName={styles.datePickerWrapper}
+              className={styles.datePicker}
+              onChange={(date: Date) => setSelectedDate(date)}
+            />
+          </div>
         </div>
 
         <button type='submit' className={styles.submitButton}>

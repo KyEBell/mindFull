@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import DatePicker from 'react-calendar';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import styles from '../styles/WriteJournalPage.module.css';
 
 interface EditJournalEntryFormProps {
   initialValues: {
@@ -29,8 +31,8 @@ const EditJournalEntryForm: React.FC<EditJournalEntryFormProps> = ({
   const [editedLearnedThing, setEditedLearnedThing] = useState(
     initialValues.learned_thing
   );
-  const [editedDate, setEditedDate] = useState(
-    initialValues.user_selected_date
+  const [editedDate, setEditedDate] = useState<Date>(
+    new Date(initialValues.user_selected_date)
   );
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -39,51 +41,52 @@ const EditJournalEntryForm: React.FC<EditJournalEntryFormProps> = ({
       good_thing: editedGoodThing,
       challenging_thing: editedChallengingThing,
       learned_thing: editedLearnedThing,
-      user_selected_date: editedDate,
+      user_selected_date: editedDate.toISOString().split('T')[0],
     });
   };
 
   return (
-    <form onSubmit={handleEditSubmit}>
-      <label>
+    <form onSubmit={handleEditSubmit} className={styles.journalsContainer}>
+      <label className={styles.labelContainer}>
         Good thing:
-        <input
-          type='text'
+        <textarea
+          className={styles.journalPageTextArea}
           value={editedGoodThing}
           onChange={(e) => setEditedGoodThing(e.target.value)}
         />
       </label>
-      <label>
+      <label className={styles.labelContainer}>
         Challenging thing:
-        <input
-          type='text'
+        <textarea
+          className={styles.journalPageTextArea}
           value={editedChallengingThing}
           onChange={(e) => setEditedChallengingThing(e.target.value)}
         />
       </label>
-      <label>
+      <label className={styles.labelContainer}>
         Learned thing:
-        <input
-          type='text'
+        <textarea
+          className={styles.journalPageTextArea}
           value={editedLearnedThing}
           onChange={(e) => setEditedLearnedThing(e.target.value)}
         />
       </label>
-      <label>
-        Date:
-        <input
-          type='text'
-          value={editedDate}
-          onChange={(e) => {
-            const enteredDate = e.target.value;
-            const formattedDate = new Date(enteredDate)
-              .toISOString()
-              .split('T')[0];
-            setEditedDate(formattedDate);
-          }}
-        />
-      </label>
-      <button type='submit'>Update Entry</button>
+      <div className={styles.labelContainer}>
+        <label>Date:</label>
+
+        <div className={styles.datePickerContainer}>
+          <DatePicker
+            selected={editedDate}
+            onChange={(date) => setEditedDate(date as Date)}
+            value={editedDate.toISOString().split('T')[0]}
+            wrapperClassName={styles.datePickerWrapper}
+            dateFormat='yyyy-MM-dd'
+          />
+        </div>
+      </div>
+      <button type='submit' className={styles.submitButton}>
+        Update Entry
+      </button>
     </form>
   );
 };

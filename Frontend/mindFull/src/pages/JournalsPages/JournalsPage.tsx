@@ -29,7 +29,6 @@ const JournalsPage: React.FC = () => {
 
   useEffect(() => {
     const fetchJournalEntry = async () => {
-      console.log('IN FETCH JOURNAL ENTRY USEEFFECT');
       try {
         const response = await fetch(journalsUrl, {
           method: 'GET',
@@ -37,9 +36,7 @@ const JournalsPage: React.FC = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setJournalEntry((prevJournalEntry) => {
-            console.log('prevJournalEntry:', prevJournalEntry);
-            console.log('data:', data);
+          setJournalEntry(() => {
             return {
               ...data,
               entry_date: new Date(data.user_selected_date).toISOString(),
@@ -97,13 +94,6 @@ const JournalsPage: React.FC = () => {
       return;
     }
     const { user_selected_date, ...rest } = editedValues;
-    // console.log('USER SELECTED DATE', user_selected_date);
-    // const formattedDate =
-    //   typeof user_selected_date === 'string'
-    //     ? (user_selected_date as string)
-    //     : (user_selected_date as Date).toISOString().split('T')[0];
-
-    // console.log('formattedDate', formattedDate);
 
     if (!id) {
       console.error('Journal entry id is undefined');
@@ -121,7 +111,6 @@ const JournalsPage: React.FC = () => {
     if (success) {
       setJournalEntry((prevJournalEntry: JournalEntry | null) => {
         if (prevJournalEntry) {
-          console.log('previous journal entry is truthy');
           return {
             ...prevJournalEntry,
             ...editedValues,
@@ -135,7 +124,6 @@ const JournalsPage: React.FC = () => {
     }
   };
 
-  console.log('JOURNAL ENTRY', journalEntry);
   return (
     <div>
       <h2>
@@ -158,6 +146,7 @@ const JournalsPage: React.FC = () => {
             <button onClick={(event) => handleButtonClick(event)}>
               Edit Entry
             </button>
+            <button>Delete Entry</button>
           </>
         ))}
     </div>

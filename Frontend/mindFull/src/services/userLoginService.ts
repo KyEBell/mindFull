@@ -12,8 +12,6 @@ async function userLoginService(
   password: string
 ): Promise<LoginResponse> {
   try {
-    console.log('username', identifier, 'password', password);
-    console.log('loginURL', loginUrl);
     const response = await fetch(loginUrl, {
       method: 'POST',
       headers: {
@@ -29,9 +27,7 @@ async function userLoginService(
       throw new Error('Login Failed');
     }
 
-    console.log('response from login service', response);
     const data: LoginResponse = await response.json();
-    console.log('Parsed data:', data);
 
     return data;
   } catch (error) {

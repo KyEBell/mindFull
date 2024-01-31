@@ -13,7 +13,6 @@ const JournalDates: React.FC = () => {
   const journalDatesUrl = date
     ? import.meta.env.VITE_BASE_API_URL + `journal-entries/date/${date}`
     : import.meta.env.VITE_BASE_API_URL + 'journal-entries/summary';
-  console.log('journaldatesURL', journalDatesUrl);
 
   useEffect(() => {
     const fetchDates = async () => {
@@ -26,8 +25,6 @@ const JournalDates: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
-            // console.log('DATA FROM journalDATES FRONTEND', data);
-            // setDates(data);
             const formattedDates = data.map((journalEntry) => ({
               ...journalEntry,
               user_selected_date: formatSelectedDate(
@@ -58,7 +55,6 @@ const JournalDates: React.FC = () => {
     fetchDates();
   }, [journalDatesUrl]);
 
-  // console.log('DATES', dates);
   return (
     <div className={styles.dashboardContainer}>
       <h2 className={styles.dashH1}>

@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_BASE_API_URL;
+const BASE_URL = import.meta.env.VITE_BASE_API_URL + 'journal-entries/';
 
 export interface JournalEntry {
   id: number | undefined;
@@ -10,15 +10,9 @@ export interface JournalEntry {
   user_selected_date: string | Date;
 }
 
-const updateJournalEntry = async (
-  // id: string,
-  // userId: string,
-  data: JournalEntry
-): Promise<boolean> => {
-  console.log('request payload', data);
-
+const updateJournalEntry = async (data: JournalEntry): Promise<boolean> => {
   try {
-    const response = await fetch(`${BASE_URL}journal-entries/${data.id}`, {
+    const response = await fetch(BASE_URL + data.id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -38,5 +32,11 @@ const updateJournalEntry = async (
     return false;
   }
 };
+
+// const deleteJournalEntry = async(id: string): Promise<boolean> => {
+//   try {
+//     const response = await fetch(BASE_URL + id)
+//   }
+// }
 
 export { updateJournalEntry };

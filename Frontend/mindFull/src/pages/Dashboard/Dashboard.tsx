@@ -15,22 +15,15 @@ const Dashboard: React.FC = () => {
       import.meta.env.VITE_BASE_API_URL + `journal-entries/date/${dateString}`;
 
     try {
-      console.log('dateurl', dateUrl);
-
       const response = await fetch(dateUrl, {
         method: 'GET',
         credentials: 'include',
       });
 
       const data = await response.json();
-
-      console.log('DATAAAA', data);
-
       if (Array.isArray(data) && data.length > 1) {
-        console.log('DATA LENGTH GREATER THAN 1');
         navigate(`dashboard/review/date/${dateString}`);
       } else if (Array.isArray(data)) {
-        console.log('DATA LENGTH IS 1');
         navigate(`/dashboard/review/${id}`);
       }
     } catch (error) {
@@ -45,10 +38,7 @@ const Dashboard: React.FC = () => {
           Welcome to your dashboard, {user?.username}!
         </h1>
         <div className={styles.calendarContainer}>
-          <DashboardCalendar
-            // datesWithEntries={datesWithEntries}
-            onDateClick={handleDateClick}
-          />
+          <DashboardCalendar onDateClick={handleDateClick} />
         </div>
       </div>
       <div className={styles.dashboardContainer}>

@@ -6,7 +6,6 @@ export interface JournalEntry {
   good_thing: string | null;
   challenging_thing: string | null;
   learned_thing: string | null;
-  entry_date: Date;
   user_selected_date: string | Date;
 }
 
@@ -33,10 +32,18 @@ const updateJournalEntry = async (data: JournalEntry): Promise<boolean> => {
   }
 };
 
-// const deleteJournalEntry = async(id: string): Promise<boolean> => {
-//   try {
-//     const response = await fetch(BASE_URL + id)
-//   }
-// }
+const deleteJournalEntry = async (id: string): Promise<boolean> => {
+  try {
+    const response = await fetch(BASE_URL + id, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
 
-export { updateJournalEntry };
+    return response.ok;
+  } catch (error) {
+    console.error('error deleteing journal entry:', error);
+    return false;
+  }
+};
+
+export { updateJournalEntry, deleteJournalEntry };

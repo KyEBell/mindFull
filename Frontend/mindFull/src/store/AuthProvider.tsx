@@ -7,6 +7,8 @@ interface AuthProviderProps {
 export interface User {
   id: string;
   username: string;
+  password: string;
+  email: string;
 }
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {

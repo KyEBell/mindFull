@@ -7,6 +7,8 @@ import useNotification from '../hooks/useNotification';
 import NavbarLinks from './NavBarLinks';
 import LogoutButton from '../UI/logoutButton';
 import useAuth from '../hooks/useAuth';
+import DashboardNavButton from '../UI/DashboardNavButton';
+import MyAccountModal from './MyAccountModal';
 
 interface HttpError {
   status: number;
@@ -20,7 +22,10 @@ const NavBar: React.FC = () => {
 
   const { showNotification, handleNotification } = useNotification();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
+  const [isMyAccountModalOpen, setIsMyAccountModalOpen] = useState(false);
+  const openMyAccountModal = () => setIsMyAccountModalOpen(true);
+  const closeMyAccountModal = () => setIsMyAccountModalOpen(false);
+  const returnToDashboard = () => navigate('/dashboard');
   const openLogoutModal = () => setIsLogoutModalOpen(true);
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
 
@@ -61,6 +66,18 @@ const NavBar: React.FC = () => {
       {showNotification && (
         <Notification message='You have been successfully logged out.' />
       )}
+      {/* MyAccount button */}
+      <button onClick={openMyAccountModal}>My Account</button>
+
+      {/* MyAccountModal */}
+      {isMyAccountModalOpen && (
+        <MyAccountModal
+          onClose={closeMyAccountModal}
+          onEdit={() => {} /* Implement edit logic here */}
+          onDelete={() => {} /* Implement delete logic here */}
+        />
+      )}
+      {isAuthenticated && <DashboardNavButton onClick={returnToDashboard} />}
 
       {isAuthenticated && <LogoutButton onClick={openLogoutModal} />}
 

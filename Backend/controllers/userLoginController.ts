@@ -49,6 +49,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     res.locals.user = {
       id: user.id,
       username: user.username,
+      email: user.email,
     };
 
     console.log('Access token from userlogincontroller', accessToken);

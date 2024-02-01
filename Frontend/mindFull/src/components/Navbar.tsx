@@ -17,7 +17,7 @@ interface HttpError {
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
   const logoutUrl = import.meta.env.VITE_BASE_API_URL + 'logout';
 
   const { showNotification, handleNotification } = useNotification();
@@ -44,6 +44,7 @@ const NavBar: React.FC = () => {
       }
 
       setIsAuthenticated(false);
+      setUser(null);
       closeLogoutModal();
       handleNotification(3000);
       navigate('/');
@@ -66,10 +67,10 @@ const NavBar: React.FC = () => {
       {showNotification && (
         <Notification message='You have been successfully logged out.' />
       )}
-      {/* MyAccount button */}
-      <button onClick={openMyAccountModal}>My Account</button>
+      {isAuthenticated && (
+        <button onClick={openMyAccountModal}>My Account</button>
+      )}
 
-      {/* MyAccountModal */}
       {isMyAccountModalOpen && (
         <MyAccountModal
           onClose={closeMyAccountModal}

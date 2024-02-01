@@ -6,7 +6,8 @@ const useAuth = () => {
   if (!context) {
     throw new Error('useAuth must be used within AuthProvider');
   }
-  return context;
+  const { isAuthenticated, setIsAuthenticated, user, setUser } = context;
+  return { isAuthenticated, setIsAuthenticated, user, setUser };
 };
 
 export default useAuth;

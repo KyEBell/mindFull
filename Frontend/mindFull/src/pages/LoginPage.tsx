@@ -33,9 +33,10 @@ const LoginPage: React.FC = () => {
       );
       console.log('AccessToken:', accessToken);
       console.log('RefreshToken:', refreshToken);
-
+      console.log('user from handle login', user);
       setIsAuthenticated(true);
       setUser(user);
+      console.log('uer from set user', user);
       // console.log('user is authenticated!', user);
       navigate('/dashboard');
     } catch (error) {

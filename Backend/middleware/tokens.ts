@@ -10,7 +10,7 @@ export interface RefreshTokenPayload {
 }
 
 const expiration = '1h';
-const refresh_expiration = '7d';
+const refresh_expiration = '3d';
 const generateAccessToken = (id: number, username: string): string => {
   const key = process.env.KEY as Secret;
 

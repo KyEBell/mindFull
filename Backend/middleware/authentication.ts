@@ -1,14 +1,8 @@
-import {
-  verify,
-  JsonWebTokenError,
-  TokenExpiredError,
-  decode,
-} from 'jsonwebtoken';
-
+import { verify, TokenExpiredError } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { Token } from './tokens';
 import { User } from '../models/userModel';
-export interface DecodedToken {
+interface DecodedToken {
   id: number;
   username: string;
   iat: number;
@@ -28,7 +22,7 @@ const authenticateToken = (
     ?.split('; ')
     .find((row) => row.startsWith('accessToken='))
     ?.split('=')[1];
-  console.log('access token from authenticate token', accessToken);
+  // console.log('access token from authenticate token', accessToken);
   if (!accessToken) {
     res.status(401).json({ error: 'Unauthorized - Access Token missing' });
     return;
@@ -36,7 +30,8 @@ const authenticateToken = (
 
   try {
     const decodedToken = verify(accessToken, process.env.KEY!);
-    console.log('decodedToken', decodedToken);
+    // console.log('decodedToken', decodedToken);
+
     const expirationTime = (decodedToken as DecodedToken).exp * 1000;
     const currentTime = new Date().getTime();
     const timeToExpiration = expirationTime - currentTime;
@@ -76,4 +71,4 @@ const authenticateToken = (
   }
 };
 
-export { authenticateToken };
+export { authenticateToken, DecodedToken };

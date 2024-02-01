@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Notification from './Notification';
 import useNotification from '../hooks/useNotification';
+import styles from '../styles/Dashboard.module.css';
 interface FormData {
   name: string;
   email: string;
@@ -53,25 +54,27 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(formOnSubmit)}>
+    <form
+      onSubmit={handleSubmit(formOnSubmit)}
+      className={styles.linksContainer}>
       {showNotification && (
         <Notification message='Form Submitted Successfully!' />
       )}
-      <div>
+      <div className={styles.formInputContainer}>
         <label htmlFor='name'>Name</label>
         <input
           type='text'
           id='name'
+          autoComplete='name'
           {...register('name', { required: 'Name is required' })}
         />
         {errors.name && <span>{errors.name.message}</span>}
-      </div>
 
-      <div>
         <label htmlFor='email'>Email</label>
         <input
           type='email'
           id='email'
+          autoComplete='email'
           {...register('email', {
             required: 'Email is required',
             pattern: {
@@ -81,9 +84,7 @@ const ContactForm: React.FC = () => {
           })}
         />
         {errors.email && <span>{errors.email.message}</span>}
-      </div>
 
-      <div>
         <label htmlFor='message'>Message</label>
         <textarea
           id='message'
@@ -92,7 +93,9 @@ const ContactForm: React.FC = () => {
         {errors.message && <span>{errors.message.message}</span>}
       </div>
 
-      <button type='submit'>Submit</button>
+      <button type='submit' className={styles.submitButton}>
+        Submit
+      </button>
     </form>
   );
 };

@@ -6,16 +6,7 @@ import pool from '../config/db';
 import { RowDataPacket } from 'mysql2/promise';
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
-  //helper function to confirm data is correct type
-  // function isUserArray(rows: RowDataPacket[]): rows is User[] {
-  //   return (
-  //     Array.isArray(rows) &&
-  //     rows.length > 0 &&
-  //     ('username' in rows[0] || 'email' in rows[0])
-  //   );
-  // }
   try {
-    console.log('IN THE LOGIN CONTROLLER');
     const { identifier, password } = req.body;
     if (!identifier || !password) {
       return res
@@ -37,12 +28,9 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         [identifier]
       );
       userRows = rows;
-      // if (isUserArray(rows)) {
-      //   userRows = rows;
-      // }
     }
     const user = userRows[0] as User | undefined;
-    if (!user || !('password' in user)) {
+    if (!user || user.id === undefined || !('password' in user)) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -61,6 +49,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     res.locals.user = {
       id: user.id,
       username: user.username,
+      email: user.email,
     };
 
     console.log('Access token from userlogincontroller', accessToken);

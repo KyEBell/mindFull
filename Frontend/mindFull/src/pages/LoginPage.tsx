@@ -33,9 +33,10 @@ const LoginPage: React.FC = () => {
       );
       console.log('AccessToken:', accessToken);
       console.log('RefreshToken:', refreshToken);
-
+      console.log('user from handle login', user);
       setIsAuthenticated(true);
       setUser(user);
+      console.log('uer from set user', user);
       // console.log('user is authenticated!', user);
       navigate('/dashboard');
     } catch (error) {
@@ -51,7 +52,9 @@ const LoginPage: React.FC = () => {
           Username or Email:
           <input
             type='text'
+            id='usernameOrEmail'
             name='usernameOrEmail'
+            autoComplete='username'
             value={formData.usernameOrEmail}
             onChange={handleFormChange}
           />
@@ -60,7 +63,9 @@ const LoginPage: React.FC = () => {
           Password:
           <input
             type='password'
+            id='password'
             name='password'
+            autoComplete='current-password'
             value={formData.password}
             onChange={handleFormChange}
           />

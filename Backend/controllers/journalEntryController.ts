@@ -2,24 +2,12 @@ import { Response, NextFunction } from 'express';
 import pool from '../config/db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import { encryptionUtils } from '../utils/encryption';
-import { JournalEntry } from '../models/journalModel';
+import { JournalEntry, DatabaseJournalEntry } from '../models/journalModel';
 import { ExtendedRequest } from '../types';
 import crypto from 'crypto';
 
 //encryptionKey
 const eKey = encryptionUtils.getEncryptionKey();
-
-//database journal entry interface
-interface DatabaseJournalEntry {
-  id: number;
-  user_id: number;
-  good_thing: string;
-  challenging_thing: string;
-  learned_thing: string;
-  iv_good_thing: string;
-  iv_challenging_thing: string;
-  iv_learned_thing: string;
-}
 
 const mapRowToDatabaseEntry = (row: RowDataPacket): DatabaseJournalEntry => {
   return {
@@ -33,7 +21,46 @@ const mapRowToDatabaseEntry = (row: RowDataPacket): DatabaseJournalEntry => {
     iv_learned_thing: row.iv_learned_thing,
   };
 };
+//DISPLAY ALL JOURNAL ENTRIES BY DATE===================================================================>
+const getJournalDates = async (
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+    const { date } = req.params;
 
+    if (date) {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT * FROM journal_entries WHERE user_id = ? AND user_selected_date = ?',
+        [userId, date]
+      );
+
+      res.locals.allDates = rows;
+    } else {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT DISTINCT user_selected_date, id FROM journal_entries WHERE user_id = ?',
+        [userId]
+      );
+
+      if (!rows || !Array.isArray(rows)) {
+        throw new Error('Invalid response from the database');
+      }
+      const allDates = rows.map((row) => ({
+        id: row.id,
+        user_selected_date: row.user_selected_date,
+      }));
+      res.locals.allDates = allDates;
+    }
+    return next();
+  } catch (err) {
+    console.log('Error fetching journal dates', err);
+    res.status(500).json({
+      error: 'Internal Server Error in Get All Journal Dates Controller',
+    });
+  }
+};
 //GET ALL JOURNAL ENTRIES===================================================================>
 const getAllJournalEntries = async (
   req: ExtendedRequest,
@@ -101,7 +128,7 @@ const getJournalEntryById = async (
       [journalEntryId, userId]
     );
     if (!journalEntry || journalEntry.length < 1) {
-      return res.status(404).json({ error: 'Journal Entry Not Found' });
+      return res.status(401).json({ error: 'Journal Entry By Id Not Found' });
     }
 
     const entry = journalEntry[0];
@@ -145,6 +172,7 @@ const addJournalEntry = async (
 
     const { good_thing, challenging_thing, learned_thing, user_selected_date } =
       req.body;
+
     const ivGT = crypto.randomBytes(16);
     const ivCT = crypto.randomBytes(16);
     const ivLT = crypto.randomBytes(16);
@@ -156,13 +184,17 @@ const addJournalEntry = async (
       ivCT
     );
     const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, ivLT);
+    const user_selected_dateString =
+      user_selected_date || new Date().toISOString(); // Use the current date if user_selected_date is not provided
+    const user_selected_dateValue = new Date(user_selected_dateString);
+
     const newJournalEntry: JournalEntry = {
       id: 0,
       user_id: userId!,
       good_thing: encryptGT,
       challenging_thing: encryptCT,
       learned_thing: encryptLT,
-      user_selected_date: new Date(user_selected_date),
+      user_selected_date: user_selected_dateValue,
     };
 
     const [newJournalEntryArray] = await pool.execute<ResultSetHeader>(
@@ -205,6 +237,7 @@ const editJournalEntry = async (
 ) => {
   try {
     const userId = req.user?.id;
+
     const journalEntryId = req.params.id;
     const [entryToEdit] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM journal_entries WHERE id = ? AND user_id = ?',
@@ -215,28 +248,8 @@ const editJournalEntry = async (
       return res.status(404).json({ error: 'Journal Entry Not Found' });
     }
 
-    // Keeping code here in the event decryption is needed for proper functionality.
-    // const existingEntry = entryToEdit[0];
-    // const existingIVGT = Buffer.from(existingEntry.iv_good_thing, 'hex');
-    // const existingIVCT = Buffer.from(existingEntry.iv_challenging_thing, 'hex');
-    // const existingIVLT = Buffer.from(existingEntry.iv_learned_thing, 'hex');
-    // const decryptedGT = encryptionUtils.decryptData(
-    //   existingEntry.good_thing,
-    //   eKey,
-    //   existingIVGT
-    // );
-    // const decryptedCT = encryptionUtils.decryptData(
-    //   existingEntry.challenging_thing,
-    //   eKey,
-    //   existingIVCT
-    // );
-    // const decryptedLT = encryptionUtils.decryptData(
-    //   existingEntry.learned_thing,
-    //   eKey,
-    //   existingIVLT
-    // );
-
-    const { good_thing, challenging_thing, learned_thing } = req.body;
+    const { good_thing, challenging_thing, learned_thing, user_selected_date } =
+      req.body;
 
     const newIVGT = crypto.randomBytes(16);
     const newIVCT = crypto.randomBytes(16);
@@ -250,7 +263,7 @@ const editJournalEntry = async (
     );
     const encryptLT = encryptionUtils.encryptData(learned_thing, eKey, newIVLT);
     await pool.execute(
-      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ?, learned_thing = ?, iv_good_thing = ?, iv_challenging_thing = ?, iv_learned_thing = ? WHERE id = ?',
+      'UPDATE journal_entries SET good_thing = ?, challenging_thing = ?, learned_thing = ?, iv_good_thing = ?, iv_challenging_thing = ?, iv_learned_thing = ?, user_selected_date = ? WHERE id = ?',
       [
         encryptGT,
         encryptCT,
@@ -258,6 +271,7 @@ const editJournalEntry = async (
         newIVGT.toString('hex'),
         newIVCT.toString('hex'),
         newIVLT.toString('hex'),
+        user_selected_date,
         journalEntryId,
       ]
     );
@@ -313,4 +327,5 @@ export const JournalEntryController = {
   addJournalEntry,
   deleteJournalEntry,
   editJournalEntry,
+  getJournalDates,
 };

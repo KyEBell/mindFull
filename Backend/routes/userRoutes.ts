@@ -47,7 +47,7 @@ router.delete(
   UserController.deleteUser,
   (req: ExtendedRequest, res: Response) => {
     const authenticatedUserId = req.user?.id;
-
+    console.log('exiting the backend controller with a reponse of 204');
     return res.status(204).json({ message: 'user successfully deleted' });
   }
 );

@@ -1,6 +1,10 @@
 const loginUrl = import.meta.env.VITE_BASE_API_URL + 'login';
-import { User } from '../store/AuthProvider';
-
+interface User {
+  id: string;
+  username: string;
+  password: string;
+  email: string;
+}
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -28,6 +32,8 @@ async function userLoginService(
     }
 
     const data: LoginResponse = await response.json();
+
+    // console.log('data from login', data);
 
     return data;
   } catch (error) {

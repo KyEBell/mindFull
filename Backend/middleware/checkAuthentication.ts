@@ -33,12 +33,14 @@ const checkAuthentication = async (
     if (timeToExpiration < 300 * 1000) {
       const newAccessToken = Token.generateAccessToken(
         (decodedToken as DecodedToken).id,
-        (decodedToken as DecodedToken).username
+        (decodedToken as DecodedToken).username,
+        (decodedToken as DecodedToken).email
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
     }
 
     req.user = decodedToken as User;
+    // console.log('req.user from check auth', req.user);
     res.status(200).json({ isAuthenticated: true, user: req.user });
   } catch (error) {
     if (error instanceof TokenExpiredError) {

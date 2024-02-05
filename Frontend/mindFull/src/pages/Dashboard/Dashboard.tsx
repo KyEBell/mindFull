@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../styles/Dashboard.module.css';
 import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 import DashboardCalendar from '../../components/DashboardCalendar';
 
 //FULL DASHBOARD COMPONENT

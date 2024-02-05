@@ -7,6 +7,8 @@ const useAuth = () => {
     throw new Error('useAuth must be used within AuthProvider');
   }
   const { isAuthenticated, setIsAuthenticated, user, setUser } = context;
+  // console.log('CONTEXT FROM useAUTH', context);
+
   return { isAuthenticated, setIsAuthenticated, user, setUser };
 };
 

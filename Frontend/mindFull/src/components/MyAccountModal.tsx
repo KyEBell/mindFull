@@ -1,42 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import useAuth from '../hooks/useAuth';
 import styles from '../styles/MyAccountModal.module.css';
+import useAccountActions from '../hooks/useAccountActions';
 
 interface MyAccountModalProps {
   onClose: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
 }
 
-const MyAccountModal: React.FC<MyAccountModalProps> = ({
-  onClose,
-  onEdit,
-  onDelete,
-}) => {
+const MyAccountModal: React.FC<MyAccountModalProps> = ({ onClose }) => {
   const { user } = useAuth();
-  console.log('USER', user);
-  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
-    useState(false);
-  const openDeleteConfirmation = () => setIsDeleteConfirmationOpen(true);
-  const closeDeleteConfirmation = () => setIsDeleteConfirmationOpen(false);
-
-  const handleEdit = () => {
-    // Implement edit logic here
-    // Make API call to update user info
-    onEdit();
-  };
-
-  const handleDelete = () => {
-    //open delete modal here
-    openDeleteConfirmation();
-  };
-
-  const confirmDelete = () => {
-    // Make API call to delete user HERE!!!
-    onDelete();
-    closeDeleteConfirmation();
-  };
+  const {
+    isDeleteConfirmationOpen,
+    openDeleteConfirmation,
+    handleEdit,
+    handleDelete,
+    confirmDelete,
+  } = useAccountActions();
 
   return (
     <>
@@ -72,8 +52,8 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({
           {isDeleteConfirmationOpen && (
             <ConfirmDeleteModal
               message='Are you sure you want to delete your account?'
-              onConfirm={confirmDelete}
-              onCancel={closeDeleteConfirmation}
+              onConfirm={() => confirmDelete(user?.id || '')}
+              onCancel={openDeleteConfirmation}
             />
           )}
         </div>

@@ -9,6 +9,7 @@ import LogoutButton from '../UI/logoutButton';
 import useAuth from '../hooks/useAuth';
 import DashboardNavButton from '../UI/DashboardNavButton';
 import MyAccountModal from './MyAccountModal';
+import useAccountActions from '../hooks/useAccountActions';
 
 interface HttpError {
   status: number;
@@ -54,6 +55,8 @@ const NavBar: React.FC = () => {
     }
   };
 
+  const { isDeleteConfirmationOpen, handleDelete } = useAccountActions();
+
   return (
     <nav className={styles.navbar}>
       <Link
@@ -74,8 +77,8 @@ const NavBar: React.FC = () => {
       {isMyAccountModalOpen && (
         <MyAccountModal
           onClose={closeMyAccountModal}
-          onEdit={() => {} /* Implement edit logic here */}
-          onDelete={() => {} /* Implement delete logic here */}
+          onEdit={() => {}}
+          onDelete={() => handleDelete()}
         />
       )}
       {isAuthenticated && <DashboardNavButton onClick={returnToDashboard} />}
@@ -88,6 +91,7 @@ const NavBar: React.FC = () => {
           confirmLogout={confirmLogout}
         />
       )}
+      {isDeleteConfirmationOpen && <div className={styles.overlay}></div>}
     </nav>
   );
 };

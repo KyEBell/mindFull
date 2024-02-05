@@ -7,7 +7,7 @@ import useAuth from './hooks/useAuth';
 
 const baseApiUrl = import.meta.env.VITE_BASE_API_URL;
 const App: React.FC = () => {
-  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
+  const { setIsAuthenticated, setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +17,6 @@ const App: React.FC = () => {
           method: 'GET',
           credentials: 'include',
         });
-
         if (response.ok) {
           const data = await response.json();
           setIsAuthenticated(data.isAuthenticated);
@@ -37,7 +36,7 @@ const App: React.FC = () => {
       }
     };
     checkAuthentication();
-  }, [setIsAuthenticated, setUser, isAuthenticated]);
+  }, []);
   if (isLoading) {
     return <h1>Loading...</h1>;
   }

@@ -40,7 +40,8 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     }
     const accessToken: string = Token.generateAccessToken(
       user.id,
-      user.username
+      user.username,
+      user.email
     );
     const refreshToken: string = Token.generateRefreshToken(user.id);
 

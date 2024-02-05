@@ -1,5 +1,7 @@
 import React from 'react';
 import styles from '../styles/ConfirmDeleteModal.module.css';
+import Notification from './Notification';
+import useNotification from '../hooks/useNotification';
 
 interface ConfirmationModalProps {
   message: string;
@@ -12,6 +14,8 @@ const ConfirmDeleteModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { showNotification } = useNotification();
+
   return (
     <div className={styles.confirmationModalOverlay}>
       <div className={styles.confirmationModal}>
@@ -22,6 +26,9 @@ const ConfirmDeleteModal: React.FC<ConfirmationModalProps> = ({
         <button className={styles.confirm} onClick={onConfirm}>
           Confirm
         </button>
+        {showNotification && (
+          <Notification message='you have successFully deleted your account' />
+        )}
       </div>
     </div>
   );

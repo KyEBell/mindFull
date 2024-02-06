@@ -49,8 +49,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       const refreshToken = Token.generateRefreshToken(newUserId);
       res.locals.accessToken = accessToken;
       res.locals.refreshToken = refreshToken;
-      console.log('refresh token from createUser', refreshToken);
-      console.log('access token from user controller', accessToken);
+      res.locals.user = {
+        id: newUserId,
+        username: newUsername,
+        email: newEmail,
+      };
+      // console.log('refresh token from createUser', refreshToken);
+      // console.log('access token from user controller', accessToken);
       return next();
     } else {
       return res.status(500).json({ error: 'Failed to create user' });
@@ -174,7 +179,8 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     }
     await pool.execute('DELETE FROM users WHERE id = ?', [userId]);
     console.log('delete user should be working? ');
-
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
     return next();
   } catch (err) {
     console.error(err);

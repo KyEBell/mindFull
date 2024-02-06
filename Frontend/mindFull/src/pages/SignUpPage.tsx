@@ -12,7 +12,7 @@ interface SignUpForm {
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, setUser } = useAuth();
   const [formData, setFormData] = useState<SignUpForm>({
     username: '',
     password: '',
@@ -51,14 +51,16 @@ const SignUpPage: React.FC = () => {
       console.log('SIGNUP ERRORS', errors);
       setValidationErrors(errors);
       if (Object.keys(errors).length === 0) {
-        const { accessToken, refreshToken } = await userSignUpService(
+        const { accessToken, refreshToken, user } = await userSignUpService(
           formData.username,
           formData.email,
           formData.password
         );
         setIsAuthenticated(true);
+        setUser(user);
         console.log('AccessToken from signuppage:', accessToken);
         console.log('RefreshToken from signuppage:', refreshToken);
+        console.log('user from handlesignup after calling setUser(user)', user);
         console.log('user is authenticated and signed in was successful');
         navigate('/dashboard');
       }

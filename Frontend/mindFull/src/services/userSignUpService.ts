@@ -1,8 +1,15 @@
 const signUpUrl = import.meta.env.VITE_BASE_API_URL + 'signup';
 
+interface User {
+  id: string;
+  username: string;
+  password: string;
+  email: string;
+}
 interface SignUpResponse {
   accessToken: string;
   refreshToken: string;
+  user: User;
 }
 
 async function userSignUpService(

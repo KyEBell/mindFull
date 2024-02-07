@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import useNotification from './useNotification';
 import { useNavigate } from 'react-router-dom';
+import useAuth from './useAuth';
 interface HttpError {
   status: number;
   message: string;
 }
 
 const userActionUrl = import.meta.env.VITE_BASE_API_URL + 'users/';
-
 const useAccountActions = () => {
+  const { setUser, setIsAuthenticated } = useAuth();
+
   const navigate = useNavigate();
   const { handleNotification } = useNotification();
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
@@ -41,6 +43,9 @@ const useAccountActions = () => {
       }
       if (response.ok) {
         console.log(`${userId} successfully deleted`);
+        setIsDeleteConfirmationOpen((prevState) => !prevState);
+        setIsAuthenticated(false);
+        setUser(null);
         handleNotification(3000);
         navigate('/');
       }

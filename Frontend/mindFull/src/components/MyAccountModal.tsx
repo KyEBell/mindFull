@@ -18,6 +18,10 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({ onClose }) => {
     confirmDelete,
   } = useAccountActions();
 
+  const handleConfirmDelete = () => {
+    confirmDelete(user?.id || '');
+    onClose(); // Close the modal after confirming the deletion
+  };
   return (
     <>
       {isDeleteConfirmationOpen && <div className={styles.overlay}></div>}
@@ -52,7 +56,7 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({ onClose }) => {
           {isDeleteConfirmationOpen && (
             <ConfirmDeleteModal
               message='Are you sure you want to delete your account?'
-              onConfirm={() => confirmDelete(user?.id || '')}
+              onConfirm={handleConfirmDelete}
               onCancel={openDeleteConfirmation}
             />
           )}

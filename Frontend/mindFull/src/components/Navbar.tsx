@@ -55,7 +55,7 @@ const NavBar: React.FC = () => {
     }
   };
 
-  const { isDeleteConfirmationOpen, handleDelete } = useAccountActions();
+  const { isDeleteConfirmationOpen } = useAccountActions();
 
   return (
     <nav className={styles.navbar}>
@@ -74,13 +74,7 @@ const NavBar: React.FC = () => {
         <button onClick={openMyAccountModal}>My Account</button>
       )}
 
-      {isMyAccountModalOpen && (
-        <MyAccountModal
-          onClose={closeMyAccountModal}
-          onEdit={() => {}}
-          onDelete={() => handleDelete()}
-        />
-      )}
+      {isMyAccountModalOpen && <MyAccountModal onClose={closeMyAccountModal} />}
       {isAuthenticated && <DashboardNavButton onClick={returnToDashboard} />}
 
       {isAuthenticated && <LogoutButton onClick={openLogoutModal} />}

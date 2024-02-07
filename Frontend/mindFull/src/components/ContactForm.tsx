@@ -25,7 +25,7 @@ const ContactForm: React.FC = () => {
     reset,
   } = useForm<FormData>();
 
-  const { showNotification, handleNotification } = useNotification(); // Initialize the useNotification hook
+  const { showNotification, handleNotification } = useNotification();
 
   const formOnSubmit: SubmitHandler<FormData> = async (data) => {
     try {

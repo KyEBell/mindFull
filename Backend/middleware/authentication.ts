@@ -5,6 +5,7 @@ import { User } from '../models/userModel';
 interface DecodedToken {
   id: number;
   username: string;
+  email: string;
   iat: number;
   exp: number;
 }
@@ -43,7 +44,8 @@ const authenticateToken = (
 
       const newAccessToken = Token.generateAccessToken(
         (decodedToken as DecodedToken).id,
-        (decodedToken as DecodedToken).username
+        (decodedToken as DecodedToken).username,
+        (decodedToken as DecodedToken).email
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
       console.log(

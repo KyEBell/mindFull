@@ -3,6 +3,7 @@ import { sign, verify, Secret } from 'jsonwebtoken';
 export interface AccessTokenPayload {
   id: number;
   username: string;
+  email: string;
 }
 
 export interface RefreshTokenPayload {
@@ -11,14 +12,18 @@ export interface RefreshTokenPayload {
 
 const expiration = '1h';
 const refresh_expiration = '3d';
-const generateAccessToken = (id: number, username: string): string => {
+const generateAccessToken = (
+  id: number,
+  username: string,
+  email: string
+): string => {
   const key = process.env.KEY as Secret;
 
   if (!key) {
     throw new Error('KEY is not defined in the environment variables.');
   }
 
-  return sign({ id, username }, key, {
+  return sign({ id, username, email }, key, {
     expiresIn: expiration,
   });
 };

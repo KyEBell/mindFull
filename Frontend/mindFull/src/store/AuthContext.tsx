@@ -1,5 +1,10 @@
 import { createContext } from 'react';
-import { User } from './AuthProvider';
+interface User {
+  id: string;
+  username: string;
+  password: string;
+  email: string;
+}
 
 interface AuthContextProps {
   isAuthenticated: boolean | null;

@@ -40,13 +40,22 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     );
     if (result.insertId) {
       const newUserId = result.insertId; // Use the inserted id
-      const { username: newUsername } = newUser;
-      const accessToken = Token.generateAccessToken(newUserId, newUsername);
+      const { username: newUsername, email: newEmail } = newUser;
+      const accessToken = Token.generateAccessToken(
+        newUserId,
+        newUsername,
+        newEmail
+      );
       const refreshToken = Token.generateRefreshToken(newUserId);
       res.locals.accessToken = accessToken;
       res.locals.refreshToken = refreshToken;
-      console.log('refresh token from createUser', refreshToken);
-      console.log('access token from user controller', accessToken);
+      res.locals.user = {
+        id: newUserId,
+        username: newUsername,
+        email: newEmail,
+      };
+      // console.log('refresh token from createUser', refreshToken);
+      // console.log('access token from user controller', accessToken);
       return next();
     } else {
       return res.status(500).json({ error: 'Failed to create user' });
@@ -145,18 +154,37 @@ const editUser = async (
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log('in the delete user backend controller');
     const userId = req.params.id;
     const [deleteUserArray] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM users WHERE id = ?',
       [userId]
     );
+
     if (deleteUserArray.length < 1) {
+      console.log('delete user NOT WORKING');
       return res.status(404).json({ error: 'User not found' });
     }
+
+    const [journalEntries] = await pool.execute<RowDataPacket[]>(
+      'SELECT * FROM journal_entries WHERE user_id = ?',
+      [userId]
+    );
+
+    if (journalEntries.length > 0) {
+      // Deleting related journal entries for the user, then deleting user afterwards.
+      await pool.execute('DELETE FROM journal_entries WHERE user_id = ?', [
+        userId,
+      ]);
+    }
     await pool.execute('DELETE FROM users WHERE id = ?', [userId]);
+    console.log('delete user should be working? ');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
     return next();
   } catch (err) {
-    return err;
+    console.error(err);
+    return next(err);
   }
 };
 

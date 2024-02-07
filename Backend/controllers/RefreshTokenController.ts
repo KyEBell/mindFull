@@ -30,7 +30,8 @@ const refresh = async (
       // This is an access token, and it has a username property
       const newAccessToken = Token.generateAccessToken(
         decodedToken.id,
-        decodedToken.username
+        decodedToken.username,
+        decodedToken.email
       );
       res.cookie('accessToken', newAccessToken, { httpOnly: true });
     }

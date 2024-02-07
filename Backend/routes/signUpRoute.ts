@@ -20,6 +20,7 @@ router.post(
       httpOnly: true,
       expires: new Date(Date.now() + 10800000),
     };
+    const user = res.locals.user;
     return res
       .status(201)
       .cookie('accessToken', accessToken, cookieOptions)
@@ -28,6 +29,7 @@ router.post(
         message: 'user successfully created',
         accessToken,
         refreshToken,
+        user,
       });
   }
 );

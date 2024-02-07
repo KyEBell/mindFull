@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
       console.log('user from handle login', user);
       setIsAuthenticated(true);
       setUser(user);
-      console.log('uer from set user', user);
+      console.log('user from set user', user);
       // console.log('user is authenticated!', user);
       navigate('/dashboard');
     } catch (error) {
